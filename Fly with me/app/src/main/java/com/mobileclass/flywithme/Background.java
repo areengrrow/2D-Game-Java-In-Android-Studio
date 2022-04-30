@@ -1,8 +1,9 @@
-package com.heyletscode.ihavetofly;
+package com.mobileclass.flywithme;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 
 public class Background {
 

@@ -1,4 +1,4 @@
-package com.heyletscode.ihavetofly;
+package com.mobileclass.flywithme;
 
 import android.content.Context;
 import android.content.Intent;

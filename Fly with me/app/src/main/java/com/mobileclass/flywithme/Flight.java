@@ -1,12 +1,10 @@
-package com.heyletscode.ihavetofly;
+package com.mobileclass.flywithme;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
-import static com.heyletscode.ihavetofly.GameView.screenRatioX;
-import static com.heyletscode.ihavetofly.GameView.screenRatioY;
 
 public class Flight {
 
@@ -29,8 +27,8 @@ public class Flight {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * screenRatioX);
-        height = (int) (height * screenRatioY);
+        width = (int) (width * GameView.screenRatioX);
+        height = (int) (height * GameView.screenRatioY);
 
         flight1 = Bitmap.createScaledBitmap(flight1, width, height, false);
         flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
@@ -51,7 +49,7 @@ public class Flight {
         dead = Bitmap.createScaledBitmap(dead, width, height, false);
 
         y = screenY / 2;
-        x = (int) (64 * screenRatioX);
+        x = (int) (64 * GameView.screenRatioX);
 
     }
 

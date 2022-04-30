@@ -1,4 +1,4 @@
-package com.heyletscode.ihavetofly;
+package com.mobileclass.flywithme;
 
 import org.junit.Test;
 

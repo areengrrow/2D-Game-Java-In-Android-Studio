@@ -1,12 +1,10 @@
-package com.heyletscode.ihavetofly;
+package com.mobileclass.flywithme;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
-import static com.heyletscode.ihavetofly.GameView.screenRatioX;
-import static com.heyletscode.ihavetofly.GameView.screenRatioY;
 
 public class Bullet {
 
@@ -23,8 +21,8 @@ public class Bullet {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * screenRatioX);
-        height = (int) (height * screenRatioY);
+        width = (int) (width * GameView.screenRatioX);
+        height = (int) (height * GameView.screenRatioY);
 
         bullet = Bitmap.createScaledBitmap(bullet, width, height, false);
 

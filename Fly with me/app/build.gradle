@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
     defaultConfig {
-        applicationId "com.heyletscode.ihavetofly"
+        applicationId "com.mobileclass.flywithme"
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 1

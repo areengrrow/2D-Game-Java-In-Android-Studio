@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "603752408266",
+    "project_id": "fly-with-me-e7e05",
+    "storage_bucket": "fly-with-me-e7e05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603752408266:android:bb0b9d3d31170862d28033",
+        "android_client_info": {
+          "package_name": "com.mobileclass.flywithme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603752408266-q2t1o9c5l0b0h86680upr9snj3efolt8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAv3jOnrmpy3jGRGRV39htzF2g_8URL-jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603752408266-q2t1o9c5l0b0h86680upr9snj3efolt8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mobileclass.flywithme.models.User;
+import com.mobileclass.flywithme.multiple.GameViewMultiple;
 
 public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
@@ -114,7 +115,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SignIn.this, MainActivity.class));
+                startActivity(new Intent(SignIn.this, GameActivityMultiple.class));
                 finish();
             }
         }, 1000);

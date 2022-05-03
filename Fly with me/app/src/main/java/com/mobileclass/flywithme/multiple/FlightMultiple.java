@@ -1,9 +1,11 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.multiple;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+
+import com.mobileclass.flywithme.R;
 
 
 public class FlightMultiple {
@@ -27,8 +29,8 @@ public class FlightMultiple {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * GameView.screenRatioX);
-        height = (int) (height * GameView.screenRatioY);
+        width = (int) (width * GameViewMultiple.screenRatioX);
+        height = (int) (height * GameViewMultiple.screenRatioY);
 
         flight1 = Bitmap.createScaledBitmap(flight1, width, height, false);
         flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
@@ -49,7 +51,7 @@ public class FlightMultiple {
         dead = Bitmap.createScaledBitmap(dead, width, height, false);
 
         y = screenY / 2;
-        x = (int) (64 * GameView.screenRatioX);
+        x = (int) (64 * GameViewMultiple.screenRatioX);
 
     }
 

@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.multiple;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +24,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mobileclass.flywithme.GameActivityMultiple;
+import com.mobileclass.flywithme.MainActivity;
+import com.mobileclass.flywithme.R;
 import com.mobileclass.flywithme.models.Post;
 import com.mobileclass.flywithme.models.User;
 
@@ -42,20 +45,20 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     private int screenX, screenY, score = 0;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
-    private Bird[] birds;
+    private BirdMultiple[] birds;
     private SharedPreferences prefs;
     private Random random;
     private SoundPool soundPool;
-    private List<Bullet> bullets;
+    private List<BulletMultiple> bullets;
     private int sound;
     private FlightMultiple flight;
-    private GameActivity activity;
-    private Background background1, background2;
+    private GameActivityMultiple activity;
+    private BackgroundMultiple background1, background2;
 
     private DatabaseReference mDatabase;
     private DatabaseReference mPostReference;
 
-    public GameViewMultiple(GameActivity activity, int screenX, int screenY) {
+    public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
 
         this.activity = activity;
@@ -84,8 +87,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         screenRatioX = 1920f / screenX;
         screenRatioY = 1080f / screenY;
 
-        background1 = new Background(screenX, screenY, getResources());
-        background2 = new Background(screenX, screenY, getResources());
+        background1 = new BackgroundMultiple(screenX, screenY, getResources());
+        background2 = new BackgroundMultiple(screenX, screenY, getResources());
 
         flight = new FlightMultiple(this, screenY, getResources());
 
@@ -97,11 +100,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         paint.setTextSize(128);
         paint.setColor(Color.WHITE);
 
-        birds = new Bird[4];
+        birds = new BirdMultiple[4];
 
         for (int i = 0;i < 4;i++) {
 
-            Bird bird = new Bird(getResources());
+            BirdMultiple bird = new BirdMultiple(getResources());
             birds[i] = bird;
 
         }
@@ -175,16 +178,16 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         if (flight.y >= screenY - flight.height)
             flight.y = screenY - flight.height;
 
-        List<Bullet> trash = new ArrayList<>();
+        List<BulletMultiple> trash = new ArrayList<>();
 
-        for (Bullet bullet : bullets) {
+        for (BulletMultiple bullet : bullets) {
 
             if (bullet.x > screenX)
                 trash.add(bullet);
 
             bullet.x += 50 * screenRatioX;
 
-            for (Bird bird : birds) {
+            for (BirdMultiple bird : birds) {
 
                 if (Rect.intersects(bird.getCollisionShape(),
                         bullet.getCollisionShape())) {
@@ -200,10 +203,10 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
         }
 
-        for (Bullet bullet : trash)
+        for (BulletMultiple bullet : trash)
             bullets.remove(bullet);
 
-        for (Bird bird : birds) {
+        for (BirdMultiple bird : birds) {
 
             bird.x -= bird.speed;
 
@@ -244,7 +247,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            for (Bird bird : birds)
+            for (BirdMultiple bird : birds)
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
 
             canvas.drawText(score + "", screenX / 2f, 164, paint);
@@ -260,7 +263,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
 
-            for (Bullet bullet : bullets)
+            for (BulletMultiple bullet : bullets)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
 
             getHolder().unlockCanvasAndPost(canvas);
@@ -386,7 +389,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
 
-        Bullet bullet = new Bullet(getResources());
+        BulletMultiple bullet = new BulletMultiple(getResources());
         bullet.x = flight.x + flight.width;
         bullet.y = flight.y + (flight.height / 2);
         bullets.add(bullet);

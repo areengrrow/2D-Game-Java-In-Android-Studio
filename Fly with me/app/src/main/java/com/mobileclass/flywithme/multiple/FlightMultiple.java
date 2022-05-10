@@ -16,12 +16,12 @@ public class FlightMultiple {
     Bitmap flight1, flight2, shoot1, shoot2, shoot3, shoot4, shoot5, dead;
     private GameViewMultiple gameView;
 
-    FlightMultiple(GameViewMultiple gameView, int screenY, Resources res) {
+    FlightMultiple(GameViewMultiple gameView, int screenX, int screenY, Resources res, boolean isLeft) {
 
         this.gameView = gameView;
 
-        flight1 = BitmapFactory.decodeResource(res, R.drawable.fly_red1);
-        flight2 = BitmapFactory.decodeResource(res, R.drawable.fly_red2);
+        flight1 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.fly1 : R.drawable.fly_red1_flip);
+//        flight2 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.fly2 : R.drawable.fly_red2_flip);
 
         width = flight1.getWidth();
         height = flight1.getHeight();
@@ -29,13 +29,13 @@ public class FlightMultiple {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * GameViewMultiple.screenRatioX);
+        width = (int) (width * GameViewMultiple.screenRatioX * (isLeft ? 1 : 1.1));
         height = (int) (height * GameViewMultiple.screenRatioY);
 
         flight1 = Bitmap.createScaledBitmap(flight1, width, height, false);
-        flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
+//        flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
 
-        shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red1);
+        shoot1 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.shoot1 : R.drawable.shoot_red1);
 //        shoot2 = BitmapFactory.decodeResource(res, R.drawable.shoot2);
 //        shoot3 = BitmapFactory.decodeResource(res, R.drawable.shoot3);
 //        shoot4 = BitmapFactory.decodeResource(res, R.drawable.shoot4);
@@ -47,15 +47,15 @@ public class FlightMultiple {
 //        shoot4 = Bitmap.createScaledBitmap(shoot4, width, height, false);
 //        shoot5 = Bitmap.createScaledBitmap(shoot5, width, height, false);
 
-        dead = BitmapFactory.decodeResource(res, R.drawable.dead_red);
+        dead = BitmapFactory.decodeResource(res, isLeft ? R.drawable.dead : R.drawable.dead_red_flip);
         dead = Bitmap.createScaledBitmap(dead, width, height, false);
 
         y = screenY / 2;
-        x = (int) (64 * GameViewMultiple.screenRatioX);
+        x = (int) (isLeft ? GameViewMultiple.screenRatioX : screenX * 1.03 * GameViewMultiple.screenRatioX);
 
     }
 
-    Bitmap getFlight () {
+    Bitmap getFlight (Boolean isLeft) {
 
         if (toShoot != 0) {
 
@@ -81,18 +81,21 @@ public class FlightMultiple {
 
 //            shootCounter = 1;
             toShoot--;
-            gameView.newBullet();
+            if (isLeft)
+                gameView.newBulletLeft();
+            else
+                gameView.newBulletRight();
 
             return shoot1;
         }
 
-        if (wingCounter == 0) {
-            wingCounter++;
-            return flight1;
-        }
-        wingCounter--;
+//        if (wingCounter == 0) {
+//            wingCounter++;
+//            return flight1;
+//        }
+//        wingCounter--;
 
-        return flight2;
+        return flight1;
     }
 
     Rect getCollisionShape () {

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class GameViewMultiple extends SurfaceView implements Runnable {
 
@@ -45,13 +44,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     private int screenX, screenY, score = 0;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
-    private BirdMultiple[] birds;
     private SharedPreferences prefs;
-    private Random random;
     private SoundPool soundPool;
-    private List<BulletMultiple> bullets;
+    private List<BulletMultiple> bulletsLeft, bulletsRight;
     private int sound;
-    private FlightMultiple flight;
+    private FlightMultiple flightLeft, flightRight;
     private GameActivityMultiple activity;
     private BackgroundMultiple background1, background2;
 
@@ -65,18 +62,14 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
         prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .setUsage(AudioAttributes.USAGE_GAME)
                     .build();
-
             soundPool = new SoundPool.Builder()
                     .setAudioAttributes(audioAttributes)
                     .build();
-
         } else
             soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
 
@@ -90,9 +83,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         background1 = new BackgroundMultiple(screenX, screenY, getResources());
         background2 = new BackgroundMultiple(screenX, screenY, getResources());
 
-        flight = new FlightMultiple(this, screenY, getResources());
+        flightLeft = new FlightMultiple(this, screenX, screenY, getResources(), true);
+        flightRight = new FlightMultiple(this, screenX, screenY, getResources(), false);
 
-        bullets = new ArrayList<>();
+        bulletsLeft = new ArrayList<>();
+        bulletsRight = new ArrayList<>();
 
         background2.x = screenX;
 
@@ -100,22 +95,10 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         paint.setTextSize(128);
         paint.setColor(Color.WHITE);
 
-        birds = new BirdMultiple[4];
-
-        for (int i = 0;i < 4;i++) {
-
-            BirdMultiple bird = new BirdMultiple(getResources());
-            birds[i] = bird;
-
-        }
-
-        random = new Random();
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference().child("posts");
         addPostEventListener(mPostReference);
-
     }
 
 
@@ -167,76 +150,49 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             background2.x = screenX;
         }
 
-        if (flight.isGoingUp)
-            flight.y -= 30 * screenRatioY;
+        if (flightLeft.isGoingUp)
+            flightLeft.y -= 30 * screenRatioY;
         else
-            flight.y += 30 * screenRatioY;
+            flightLeft.y += 30 * screenRatioY;
 
-        if (flight.y < 0)
-            flight.y = 0;
+        if (flightLeft.y < 0)
+            flightLeft.y = 0;
 
-        if (flight.y >= screenY - flight.height)
-            flight.y = screenY - flight.height;
+        if (flightLeft.y >= screenY - flightLeft.height)
+            flightLeft.y = screenY - flightLeft.height;
+
+        flightRight.y += 30 * screenRatioY * (flightRight.isGoingUp ? -1 : 1);
+        flightRight.y = Math.max(0, flightRight.y);
+        flightRight.y = Math.min(screenY - flightRight.height, flightRight.y);
 
         List<BulletMultiple> trash = new ArrayList<>();
 
-        for (BulletMultiple bullet : bullets) {
-
+        for (BulletMultiple bullet : bulletsLeft) {
             if (bullet.x > screenX)
                 trash.add(bullet);
-
             bullet.x += 50 * screenRatioX;
-
-            for (BirdMultiple bird : birds) {
-
-                if (Rect.intersects(bird.getCollisionShape(),
-                        bullet.getCollisionShape())) {
-
-                    score++;
-                    bird.x = -500;
-                    bullet.x = screenX + 500;
-                    bird.wasShot = true;
-
-                }
-
+            if (Rect.intersects(flightLeft.getCollisionShape(),
+                    bullet.getCollisionShape())) {
+//                score++;
+//                isGameOver = true;
             }
-
         }
 
-        for (BulletMultiple bullet : trash)
-            bullets.remove(bullet);
-
-        for (BirdMultiple bird : birds) {
-
-            bird.x -= bird.speed;
-
-            if (bird.x + bird.width < 0) {
-
-                if (!bird.wasShot) {
-                    isGameOver = true;
-                    return;
-                }
-
-                int bound = (int) (30 * screenRatioX);
-                bird.speed = random.nextInt(bound);
-
-                if (bird.speed < 10 * screenRatioX)
-                    bird.speed = (int) (10 * screenRatioX);
-
-                bird.x = screenX;
-                bird.y = random.nextInt(screenY - bird.height);
-
-                bird.wasShot = false;
+        for (BulletMultiple bullet : bulletsRight) {
+            if (bullet.x < 0)
+                trash.add(bullet);
+            bullet.x -= 50 * screenRatioX;
+            if (Rect.intersects(flightRight.getCollisionShape(),
+                    bullet.getCollisionShape())) {
+//                score++;
+//                isGameOver = true;
             }
-
-            if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape())) {
-
-                isGameOver = true;
-                return;
-            }
-
         }
 
+        for (BulletMultiple bullet : trash) {
+            bulletsLeft.remove(bullet);
+            bulletsRight.remove(bullet);
+        }
     }
 
     private void draw () {
@@ -247,23 +203,24 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            for (BirdMultiple bird : birds)
-                canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
-
             canvas.drawText(score + "", screenX / 2f, 164, paint);
 
             if (isGameOver) {
                 isPlaying = false;
-                canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+                canvas.drawBitmap(flightLeft.getDead(), flightLeft.x, flightLeft.y, paint);
+                canvas.drawBitmap(flightRight.getDead(), flightRight.x, flightRight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
                 saveIfHighScore();
                 waitBeforeExiting ();
                 return;
             }
 
-            canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
+            canvas.drawBitmap(flightLeft.getFlight(true), flightLeft.x, flightLeft.y, paint);
+            canvas.drawBitmap(flightRight.getFlight(false), flightRight.x, flightRight.y, paint);
 
-            for (BulletMultiple bullet : bullets)
+            for (BulletMultiple bullet : bulletsLeft)
+                canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
+            for (BulletMultiple bullet : bulletsRight)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
 
             getHolder().unlockCanvasAndPost(canvas);
@@ -327,8 +284,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getX() < screenX / 2) {
-                    flight.isGoingUp = true;
-                    flight.toShoot++;
+//                    flight.isGoingUp = true;
+//                    flight.toShoot++;
                 }
                 final String userId = getUid();
                 mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
@@ -356,9 +313,9 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         });
                 break;
             case MotionEvent.ACTION_UP:
-                flight.isGoingUp = false;
+//                flight.isGoingUp = false;
                 if (event.getX() > screenX / 2)
-                    flight.toShoot++;
+//                    flight.toShoot++;
                 break;
         }
 
@@ -384,15 +341,25 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         Log.w(TAG, "post");
     }
 
-    public void newBullet() {
+    public void newBulletLeft() {
 
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
 
-        BulletMultiple bullet = new BulletMultiple(getResources());
-        bullet.x = flight.x + flight.width;
-        bullet.y = flight.y + (flight.height / 2);
-        bullets.add(bullet);
+        BulletMultiple bullet = new BulletMultiple(getResources(), true);
+        bullet.x = flightLeft.x + flightLeft.width;
+        bullet.y = flightLeft.y + (flightLeft.height / 2);
+        bulletsLeft.add(bullet);
+    }
 
+    public void newBulletRight() {
+
+        if (!prefs.getBoolean("isMute", false))
+            soundPool.play(sound, 1, 1, 0, 0, 1);
+
+        BulletMultiple bullet = new BulletMultiple(getResources(), false);
+        bullet.x = flightRight.x + flightRight.width;
+        bullet.y = flightRight.y + (flightRight.height / 2);
+        bulletsRight.add(bullet);
     }
 }

@@ -13,9 +13,9 @@ public class BulletMultiple {
     int x, y, width, height;
     Bitmap bullet;
 
-    BulletMultiple(Resources res) {
+    BulletMultiple(Resources res, boolean isLeft) {
 
-        bullet = BitmapFactory.decodeResource(res, R.drawable.bullet_red);
+        bullet = BitmapFactory.decodeResource(res, isLeft ? R.drawable.bullet : R.drawable.bullet_red_flip);
 
         width = bullet.getWidth();
         height = bullet.getHeight();

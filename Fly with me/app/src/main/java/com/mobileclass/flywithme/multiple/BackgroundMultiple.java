@@ -14,7 +14,7 @@ public class BackgroundMultiple {
 
     BackgroundMultiple(int screenX, int screenY, Resources res) {
 
-        background = BitmapFactory.decodeResource(res, R.drawable.background_palace);
+        background = BitmapFactory.decodeResource(res, R.drawable.background);
         background = Bitmap.createScaledBitmap(background, screenX, screenY, false);
 
     }

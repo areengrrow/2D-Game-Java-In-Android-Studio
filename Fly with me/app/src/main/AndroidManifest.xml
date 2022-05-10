@@ -9,22 +9,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignIn"
+        <activity
+            android:name=".SelectPlayerActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
-        <activity android:name=".GameActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".SignInActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
-        <activity android:name=".GameActivityMultiple"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".GameActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".GameActivityMultiple"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"
-            android:exported="true">
+            android:theme="@style/AppTheme.noActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

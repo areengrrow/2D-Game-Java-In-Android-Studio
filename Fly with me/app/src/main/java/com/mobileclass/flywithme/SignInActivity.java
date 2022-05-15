@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mobileclass.flywithme.models.User;
+import com.mobileclass.flywithme.multiple.Singleton;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,6 +32,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
+    Singleton x = Singleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +130,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
-            return email.split("@")[0];
+            x.username = email.split("@")[0];
+            return x.username;
         } else {
             return email;
         }

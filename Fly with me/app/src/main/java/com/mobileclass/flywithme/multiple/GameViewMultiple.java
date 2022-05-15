@@ -25,15 +25,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mobileclass.flywithme.GameActivityMultiple;
-import com.mobileclass.flywithme.MainActivity;
 import com.mobileclass.flywithme.R;
+import com.mobileclass.flywithme.SelectPlayerActivity;
 import com.mobileclass.flywithme.models.Post;
 import com.mobileclass.flywithme.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class GameViewMultiple extends SurfaceView implements Runnable {
 
@@ -41,9 +45,10 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     private static final String TAG_GET = "GetPost";
     private Thread thread;
     private boolean isPlaying, isGameOver = false;
-    private int screenX, screenY, score = 0;
+    private int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
+    private Paint paintName;
     private SharedPreferences prefs;
     private SoundPool soundPool;
     private List<BulletMultiple> bulletsLeft, bulletsRight;
@@ -54,6 +59,14 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     private DatabaseReference mDatabase;
     private DatabaseReference mPostReference;
+    Singleton singleton = Singleton.getInstance();
+    final String userId = getUid();
+    final String databaseChild = "user-posts";
+    private long scoreLeft = 0, scoreRight = 0;
+    final boolean isServer = Objects.equals(singleton.left, userId);
+    private boolean leftState = true, rightState = true;
+    Set<Long> playTimes = new HashSet<Long>();
+    Long shootTime, intersectLeft, intersectRight;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
@@ -94,28 +107,56 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         paint = new Paint();
         paint.setTextSize(128);
         paint.setColor(Color.WHITE);
+        paintName = new Paint();
+        paintName.setTextSize(70);
+        paintName.setColor(Color.BLACK);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Initialize Database
-        mPostReference = FirebaseDatabase.getInstance().getReference().child("posts");
+        mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
     }
 
 
     private void addPostEventListener(DatabaseReference mPostReference) {
-        // [START post_value_event_listener]
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                Log.w(TAG_GET, "post");
-                // ..
+//                if (!isPlaying)
+//                    return;
+                Map<String, Map<String, Map<String, ?>>> postMap =
+                        (HashMap<String, Map<String, Map<String, ?>>>) dataSnapshot.getValue();
+                for (String user : postMap.keySet()) {
+                    boolean iL = Objects.equals(user, singleton.left);
+                    if (!iL && !Objects.equals(user, singleton.right))
+                        continue;
+                    Map<String, Map<String, ?>> datumMap = postMap.get(user);
+                    for (String key : datumMap.keySet()) {
+                        Map<String, ?> dataMap = datumMap.get(key);
+                        long time = (long) dataMap.get("time");
+                        Date date = new Date();
+                        if (playTimes.contains(time) || time < date.getTime() - 5000)
+                            continue;
+                        playTimes.add(time);
+                        if (iL) {
+                            scoreLeft = (long) dataMap.get("scoreLeft");
+                            scoreRight = (long) dataMap.get("scoreRight");
+                            flightLeft.isGoingUp = (boolean) dataMap.get("bound");
+                            flightLeft.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
+                            leftState = (boolean) dataMap.get("left");
+                            rightState = (boolean) dataMap.get("right");
+                            isGameOver = (boolean) dataMap.get("end");
+                        } else {
+                            flightRight.isGoingUp = (boolean) dataMap.get("bound");
+                            flightRight.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
+                        }
+                    }
+                }
+                Log.w(TAG_GET, databaseChild);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
                 Log.w(TAG_GET, "loadPost:onCancelled", databaseError.toException());
             }
         };
@@ -126,15 +167,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
-
         while (isPlaying) {
-
             update ();
             draw ();
             sleep ();
-
         }
-
     }
 
     private void update () {
@@ -171,10 +208,14 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             if (bullet.x > screenX)
                 trash.add(bullet);
             bullet.x += 50 * screenRatioX;
-            if (Rect.intersects(flightLeft.getCollisionShape(),
+            if (isServer && Rect.intersects(flightRight.getCollisionShape(),
                     bullet.getCollisionShape())) {
-//                score++;
-//                isGameOver = true;
+                Date date = new Date();
+                if (intersectRight == null || intersectRight < date.getTime() - 300) {
+                    intersectRight = date.getTime();
+                    composePost(scoreLeft + 1, scoreRight, false, false, true, false,
+                            scoreLeft > 8);
+                }
             }
         }
 
@@ -182,10 +223,14 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             if (bullet.x < 0)
                 trash.add(bullet);
             bullet.x -= 50 * screenRatioX;
-            if (Rect.intersects(flightRight.getCollisionShape(),
+            if (isServer && Rect.intersects(flightLeft.getCollisionShape(),
                     bullet.getCollisionShape())) {
-//                score++;
-//                isGameOver = true;
+                Date date = new Date();
+                if (intersectLeft == null || intersectLeft < date.getTime() - 300) {
+                    intersectLeft = date.getTime();
+                    composePost(scoreLeft, scoreRight + 1, false, false, false, true,
+                            scoreRight > 8);
+                }
             }
         }
 
@@ -203,20 +248,22 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            canvas.drawText(score + "", screenX / 2f, 164, paint);
+            canvas.drawText(scoreLeft + " - " + scoreRight, screenX / 2f - 64, 164, paint);
+            canvas.drawText(singleton.leftName, flightLeft.x, flightLeft.y - 30, paintName);
+            canvas.drawText(singleton.rightName, flightRight.x, flightRight.y - 30, paintName);
 
+            canvas.drawBitmap(leftState ? flightLeft.getFlight(true) : flightLeft.getDead(),
+                        flightLeft.x, flightLeft.y, paint);
+            leftState = true;
+            canvas.drawBitmap(rightState ? flightRight.getFlight(false) : flightRight.getDead(),
+                        flightRight.x, flightRight.y, paint);
+            rightState = true;
             if (isGameOver) {
                 isPlaying = false;
-                canvas.drawBitmap(flightLeft.getDead(), flightLeft.x, flightLeft.y, paint);
-                canvas.drawBitmap(flightRight.getDead(), flightRight.x, flightRight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
-                saveIfHighScore();
                 waitBeforeExiting ();
                 return;
             }
-
-            canvas.drawBitmap(flightLeft.getFlight(true), flightLeft.x, flightLeft.y, paint);
-            canvas.drawBitmap(flightRight.getFlight(false), flightRight.x, flightRight.y, paint);
 
             for (BulletMultiple bullet : bulletsLeft)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
@@ -230,26 +277,15 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     private void waitBeforeExiting() {
-
         try {
             Thread.sleep(3000);
-            activity.startActivity(new Intent(activity, MainActivity.class));
+            activity.startActivity(new Intent(activity, SelectPlayerActivity.class));
             activity.finish();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void saveIfHighScore() {
-
-        if (prefs.getInt("highscore", 0) < score) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("highscore", score);
-            editor.apply();
-        }
-
-    }
 
     private void sleep () {
         try {
@@ -260,65 +296,40 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     public void resume () {
-
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
-
     }
 
     public void pause () {
-
         try {
             isPlaying = false;
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() < screenX / 2) {
-//                    flight.isGoingUp = true;
-//                    flight.toShoot++;
+                boolean isShoot = (event.getX() < screenX / 2) != isServer;
+                Date date = new Date();
+                if (!isShoot)
+                    composePost(scoreLeft, scoreRight, true, false,
+                            true, true, false);
+                else if (shootTime == null || shootTime < date.getTime() - 400) {
+                    shootTime = date.getTime();
+                    composePost(scoreLeft, scoreRight, false, true,
+                            true, true, false);
                 }
-                final String userId = getUid();
-                mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                // Get user value
-                                User user = dataSnapshot.getValue(User.class);
-
-                                if (user == null) {
-                                    // User is null, error out
-                                    Log.e(TAG, "User " + userId + " is unexpectedly null");
-                                    Toast.makeText(getContext(),
-                                            "Error: could not fetch user.",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // Write new post
-                                    writeNewPost(userId, user.username, Integer.toString(score), "test");
-                                }
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
                 break;
             case MotionEvent.ACTION_UP:
-//                flight.isGoingUp = false;
-                if (event.getX() > screenX / 2)
-//                    flight.toShoot++;
+                composePost(scoreLeft, scoreRight, false, false,
+                        true, true, false);
                 break;
         }
-
         return true;
     }
 
@@ -326,26 +337,24 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    private void writeNewPost(String userId, String username, String title, String body) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
+    private void writeNewPost(String username, long scoreLeft, long scoreRight, boolean bound,
+                              boolean shoot, boolean left, boolean right, boolean end) {
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body);
+        Date date = new Date();
+        Post post = new Post(userId, username, scoreLeft, scoreRight, bound, shoot, left, right,
+                end, date.getTime());
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+        childUpdates.put("/" + databaseChild + "/" + userId + "/" + key, postValues);
 
         mDatabase.updateChildren(childUpdates);
-        Log.w(TAG, "post");
+        Log.w(TAG, databaseChild);
     }
 
     public void newBulletLeft() {
-
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-
         BulletMultiple bullet = new BulletMultiple(getResources(), true);
         bullet.x = flightLeft.x + flightLeft.width;
         bullet.y = flightLeft.y + (flightLeft.height / 2);
@@ -353,13 +362,34 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     public void newBulletRight() {
-
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-
         BulletMultiple bullet = new BulletMultiple(getResources(), false);
-        bullet.x = flightRight.x + flightRight.width;
-        bullet.y = flightRight.y + (flightRight.height / 2);
+        bullet.x = flightRight.x;
+        bullet.y = flightRight.y + (flightRight.height / 2) + 35;
         bulletsRight.add(bullet);
+    }
+
+    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot, boolean left,
+                            boolean right, boolean end) {
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user == null) {
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+                            Toast.makeText(activity, "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            writeNewPost(user.username, scoreLeft, scoreRight, bound, shoot,
+                                    left, right, end);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
     }
 }

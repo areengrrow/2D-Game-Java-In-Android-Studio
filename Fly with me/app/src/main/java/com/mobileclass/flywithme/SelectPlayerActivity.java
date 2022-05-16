@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,11 +55,14 @@ public class SelectPlayerActivity extends AppCompatActivity {
     Singleton singleton = Singleton.getInstance();
     Set<Long> askTimes = new HashSet<Long>();
     boolean changeActivity = false;
+    Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_player);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         usersGV = findViewById(R.id.users);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -73,16 +78,39 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 TextView userTV = view.findViewById(R.id.user);
                 partner = (String) userTV.getText();
                 isAsking = true;
-                userTV.setBackgroundColor(Color.BLUE);
+                view.setBackgroundColor(Color.GRAY);
+                composePost(partner, false, true, false, false);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        userTV.setBackgroundColor(Color.WHITE);
+                        view.setBackgroundColor(Color.WHITE);
                     }
                 }, 200);
-                composePost(partner, false, true, false, false);
+                Toast.makeText(SelectPlayerActivity.this,
+                        "Waiting response of your partner.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
+
+        backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (singleton.message != null) {
+            Toast.makeText(SelectPlayerActivity.this, singleton.message, Toast.LENGTH_SHORT)
+                    .show();
+            singleton.message = null;
+            startRepeatingTask();
+            changeActivity = false;
+        }
     }
 
     Runnable mStatusChecker = new Runnable() {
@@ -92,7 +120,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 return;
             composePost("", true, false, false, false);
             // 5 seconds by default, can be changed later
-            int mInterval = 10000;
+            int mInterval = 3000;
             mHandler.postDelayed(mStatusChecker, mInterval);
         }
     };
@@ -124,7 +152,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     Date date = new Date();
                     if (!Objects.equals(type, "select") ||
                             Objects.equals(singleton.username, authorName) ||
-                            time < date.getTime() - 10000)
+                            time < date.getTime() - 5000)
                         continue;
                     boolean wait = (boolean) dataMap.get("wait");
                     if (wait)
@@ -139,15 +167,12 @@ public class SelectPlayerActivity extends AppCompatActivity {
                         if (accept) {
                             stopRepeatingTask();
                             changeActivity = true;
-                            mStatusChecker = null;
-                            mHandler = null;
                             singleton.left = userId;
                             singleton.leftName = partnerName;
                             singleton.right = uid;
                             singleton.rightName = authorName;
                             startActivity(new Intent(SelectPlayerActivity.this,
                                     GameActivityMultiple.class));
-                            finish();
                         } else
                             isAsking = false;
 
@@ -192,6 +217,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     composePost(partnerName, false, false, true, false);
+                    stopRepeatingTask();
+                    changeActivity = true;
                     singleton.left = uid;
                     singleton.right = userId;
                     singleton.leftName = partnerName;
@@ -201,7 +228,6 @@ public class SelectPlayerActivity extends AppCompatActivity {
                         public void run() {
                             startActivity(new Intent(SelectPlayerActivity.this,
                                     GameActivityMultiple.class));
-                            finish();
                         }
                     }, 1000);
                 }

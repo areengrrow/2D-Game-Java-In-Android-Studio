@@ -11,6 +11,7 @@ public class Singleton {
     public String rightName;
     public String right;
     public String left;
+    public String message;
 
     // Constructor
     // Here we will be creating private constructor
@@ -18,9 +19,6 @@ public class Singleton {
     private Singleton()
     {
         username = "Hello I am a string part of Singleton class";
-//        role = "set role";
-//        right = "";
-//        left = "";
     }
 
     // Static method

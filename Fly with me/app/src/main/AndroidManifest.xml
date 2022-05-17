@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobileclass.flywithme">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -9,22 +8,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SignIn"
+        <activity
+            android:name=".ChooseTheme"
+            android:exported="false"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
-        <activity android:name=".GameActivity"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".SelectPlayerActivity"
+            android:exported="false"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
-        <activity android:name=".GameActivityMultiple"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".SignInActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".GameActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".GameActivityMultiple"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"
-            android:exported="true">
+            android:theme="@style/AppTheme.noActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

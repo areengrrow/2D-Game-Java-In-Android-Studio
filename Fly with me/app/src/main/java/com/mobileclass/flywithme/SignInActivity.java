@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,9 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mobileclass.flywithme.models.User;
-import com.mobileclass.flywithme.multiple.GameViewMultiple;
+import com.mobileclass.flywithme.multiple.Singleton;
 
-public class SignIn extends AppCompatActivity implements View.OnClickListener {
+public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "SignIn";
     Button btnSignIn, btnSignUp;
@@ -32,21 +33,33 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
+    Singleton x = Singleton.getInstance();
+    Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
         btnSignIn = findViewById(R.id.buttonSignIn);
         btnSignUp = findViewById(R.id.buttonSignUp);
-        btnSignIn.setOnClickListener(SignIn.this);
-        btnSignUp.setOnClickListener(SignIn.this);
+        btnSignIn.setOnClickListener(SignInActivity.this);
+        btnSignUp.setOnClickListener(SignInActivity.this);
         etEmail = findViewById(R.id.fieldEmail);
         etPassword = findViewById(R.id.fieldPassword);
         mProgressBar = findViewById(R.id.progressBar);
+
+        backBtn = findViewById(R.id.backBtn1);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                finish();
+            }
+        });
     }
 
     private void signIn() {
@@ -56,13 +69,13 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 //        }
 
         showProgressBar();
-//        String email = etEmail.getText().toString();
-//        String password = etPassword.getText().toString();
-        String email = "a@mail.com";
-        String password = "123456";
+        String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
+//        String email = "a@mail.com";
+//        String password = "123456";
 
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignIn.this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
@@ -71,7 +84,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
-                            Toast.makeText(SignIn.this, "Sign In Failed",
+                            Toast.makeText(SignInActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -89,7 +102,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         String password = etPassword.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignIn.this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser:onComplete:" + task.isSuccessful());
@@ -98,7 +111,7 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
                         if (task.isSuccessful()) {
                             onAuthSuccess(task.getResult().getUser());
                         } else {
-                            Toast.makeText(SignIn.this, "Sign Up Failed",
+                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -115,8 +128,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SignIn.this, GameActivityMultiple.class));
-                finish();
+                startActivity(new Intent(SignInActivity.this, SelectPlayerActivity.class));
+//                finish();
             }
         }, 1000);
     }
@@ -129,7 +142,8 @@ public class SignIn extends AppCompatActivity implements View.OnClickListener {
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
-            return email.split("@")[0];
+            x.username = email.split("@")[0];
+            return x.username;
         } else {
             return email;
         }

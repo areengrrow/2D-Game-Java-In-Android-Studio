@@ -13,9 +13,9 @@ public class BulletMultiple {
     int x, y, width, height;
     Bitmap bullet;
 
-    BulletMultiple(Resources res) {
+    BulletMultiple(Resources res, boolean isLeft) {
 
-        bullet = BitmapFactory.decodeResource(res, R.drawable.bullet_red);
+        bullet = BitmapFactory.decodeResource(res, isLeft ? R.drawable.bullet : R.drawable.bullet_red_flip);
 
         width = bullet.getWidth();
         height = bullet.getHeight();
@@ -23,8 +23,8 @@ public class BulletMultiple {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * GameViewMultiple.screenRatioX);
-        height = (int) (height * GameViewMultiple.screenRatioY);
+        width = (int) (width * GameViewMultiple.screenRatioX * (isLeft ? 1 : 1.8));
+        height = (int) (height * GameViewMultiple.screenRatioY * (isLeft ? 1 : 1.8));
 
         bullet = Bitmap.createScaledBitmap(bullet, width, height, false);
 

@@ -13,8 +13,7 @@ public class Background {
     Bitmap background;
 
     Background (int screenX, int screenY, Resources res) {
-        ImageView img = R.drawable.assassinscreed_back;
-        background = BitmapFactory.decodeResource(res, );
+        background = BitmapFactory.decodeResource(res, R.id.nature_back);
         background = Bitmap.createScaledBitmap(background, screenX, screenY, false);
 
     }

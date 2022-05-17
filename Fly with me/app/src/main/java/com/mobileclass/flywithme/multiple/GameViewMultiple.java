@@ -138,8 +138,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                             continue;
                         playTimes.add(time);
                         if (isLeftSignal) {
-                            scoreLeft = (long) dataMap.get("scoreLeft");
-                            scoreRight = (long) dataMap.get("scoreRight");
+                            scoreLeft = Math.max(scoreLeft, (long) dataMap.get("scoreLeft"));
+                            scoreRight = Math.max(scoreRight, (long) dataMap.get("scoreRight"));
                             flightLeft.isGoingUp = (boolean) dataMap.get("bound");
                             flightLeft.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
                             leftState = (boolean) dataMap.get("left");
@@ -262,8 +262,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             canvas.drawBitmap(rightState ? flightRight.getFlight(false) : flightRight.getDead(),
                         flightRight.x, flightRight.y, paint);
             rightState = true;
-            if (isExit || isGameOver) {
-                String m = isExit ? "Player exits" :
+            if (isExit || isGameOver || pressExit) {
+                String m = (isExit || pressExit) ? "Player exits" :
                         ("You " + ((isServer && scoreLeft > scoreRight) ||
                                 (!isServer && scoreLeft < scoreRight) ? "win" : "lose"));
                 canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);

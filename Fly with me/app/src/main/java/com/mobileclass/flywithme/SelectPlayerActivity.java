@@ -231,7 +231,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             startActivity(new Intent(SelectPlayerActivity.this,
                                     GameActivityMultiple.class));
                         }
-                    }, 1000);
+                    }, 300);
                 }
             })
             .setNegativeButton("Reject", new DialogInterface.OnClickListener() {

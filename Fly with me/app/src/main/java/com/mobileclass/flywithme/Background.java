@@ -3,6 +3,7 @@ package com.mobileclass.flywithme;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.widget.ImageView;
 
 
@@ -12,8 +13,8 @@ public class Background {
     Bitmap background;
 
     Background (int screenX, int screenY, Resources res) {
-
-        background = BitmapFactory.decodeResource(res, R.drawable.assassinscreed_back);
+        ImageView img = R.drawable.assassinscreed_back;
+        background = BitmapFactory.decodeResource(res, );
         background = Bitmap.createScaledBitmap(background, screenX, screenY, false);
 
     }

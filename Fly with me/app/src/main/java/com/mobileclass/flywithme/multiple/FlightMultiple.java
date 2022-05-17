@@ -41,7 +41,7 @@ public class FlightMultiple {
         dead = Bitmap.createScaledBitmap(dead, width, height, false);
 
         y = screenY / 2;
-        x = (int) (isLeft ? GameViewMultiple.screenRatioX : screenX * GameViewMultiple.screenRatioX * 0.9);
+        x = (int) (isLeft ? GameViewMultiple.screenRatioX : screenX * GameViewMultiple.screenRatioX);
 
     }
 

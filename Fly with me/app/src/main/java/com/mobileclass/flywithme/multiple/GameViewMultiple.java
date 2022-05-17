@@ -263,13 +263,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         flightRight.x, flightRight.y, paint);
             rightState = true;
             if (isExit || isGameOver) {
-                String m = "You " + ((isServer && scoreLeft > scoreRight) ||
-                        (!isServer && scoreLeft < scoreRight) ? "win" : "lose");
-                if (isGameOver) {
-                    canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);
-                }
-                singleton.message = (isExit ? "Player exits" : m) +
-                        ". Choose partner to play.";
+                String m = isExit ? "Player exits" :
+                        ("You " + ((isServer && scoreLeft > scoreRight) ||
+                                (!isServer && scoreLeft < scoreRight) ? "win" : "lose"));
+                canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);
+                singleton.message = m + ". Choose partner to play.";
                 isPlaying = false;
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
@@ -390,7 +388,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             soundPool.play(sound, 1, 1, 0, 0, 1);
         BulletMultiple bullet = new BulletMultiple(getResources(), false);
         bullet.x = flightRight.x;
-        bullet.y = flightRight.y + (flightRight.height / 2) + 35;
+        bullet.y = flightRight.y + (flightRight.height / 2) + 25;
         bulletsRight.add(bullet);
     }
 

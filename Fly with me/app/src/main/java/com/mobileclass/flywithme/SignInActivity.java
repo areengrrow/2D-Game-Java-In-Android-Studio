@@ -69,10 +69,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 //        }
 
         showProgressBar();
-//        String email = etEmail.getText().toString();
-//        String password = etPassword.getText().toString();
-        String email = "b@b.com";
-        String password = "123456";
+        String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
+//        String email = "a@mail.com";
+//        String password = "123456";
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {

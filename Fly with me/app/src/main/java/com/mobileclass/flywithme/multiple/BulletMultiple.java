@@ -23,8 +23,8 @@ public class BulletMultiple {
         width /= 4;
         height /= 4;
 
-        width = (int) (width * GameViewMultiple.screenRatioX * (isLeft ? 1 : 1.2));
-        height = (int) (height * GameViewMultiple.screenRatioY * (isLeft ? 1 : 1.2));
+        width = (int) (width * GameViewMultiple.screenRatioX * (isLeft ? 1 : 1.8));
+        height = (int) (height * GameViewMultiple.screenRatioY * (isLeft ? 1 : 1.8));
 
         bullet = Bitmap.createScaledBitmap(bullet, width, height, false);
 

@@ -43,6 +43,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     private static final String TAG_GET = "GetPost";
     GridView usersGV;
     private DatabaseReference mDatabase;
+    private DatabaseReference mPostReference;
     Set<String> users = new HashSet<String>();
     final String userId = getUid();
     Handler handler = new Handler();
@@ -66,7 +67,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
         usersGV = findViewById(R.id.users);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
+        mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
 
         mHandler = new Handler();
@@ -83,7 +84,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        view.setBackgroundColor(Color.WHITE);
+                        view.setBackgroundColor(Color.LTGRAY);
                     }
                 }, 200);
                 Toast.makeText(SelectPlayerActivity.this,
@@ -110,6 +111,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
             singleton.message = null;
             startRepeatingTask();
             changeActivity = false;
+            addPostEventListener(mPostReference);
         }
     }
 
@@ -155,7 +157,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             time < date.getTime() - 5000)
                         continue;
                     boolean wait = (boolean) dataMap.get("wait");
-                    if (wait)
+                    if (wait && !Objects.equals(singleton.username, authorName))
                         users.add(authorName);
                     else if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");

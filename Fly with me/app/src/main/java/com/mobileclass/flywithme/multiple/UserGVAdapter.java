@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.multiple;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mobileclass.flywithme.R;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class UserGVAdapter extends ArrayAdapter<String> {
     public UserGVAdapter(@NonNull Context context, ArrayList<String> users) {

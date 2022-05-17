@@ -26,8 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mobileclass.flywithme.models.PostSelect;
 import com.mobileclass.flywithme.models.User;
-import com.mobileclass.flywithme.multiple.GameViewMultiple;
 import com.mobileclass.flywithme.multiple.Singleton;
+import com.mobileclass.flywithme.multiple.UserGVAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;

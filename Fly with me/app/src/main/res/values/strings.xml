@@ -4,4 +4,8 @@
     <string name="hint_password">password</string>
     <string name="hint_email">email</string>
     <string name="sign_in">Sign In</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="in_game_background">R.drawable.background</string>
 </resources>

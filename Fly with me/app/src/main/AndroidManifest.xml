@@ -10,9 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SelectPlayerActivity"
-            android:screenOrientation="landscape"
+            android:name=".ChooseTheme"
             android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".SelectPlayerActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.noActionBar" />
         <activity
             android:name=".SignInActivity"

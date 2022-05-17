@@ -301,4 +301,5 @@ public class GameView extends SurfaceView implements Runnable {
         bullets.add(bullet);
 
     }
+
 }

@@ -1,7 +1,6 @@
 package com.mobileclass.flywithme.multiple;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +10,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -25,35 +25,46 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mobileclass.flywithme.GameActivityMultiple;
-import com.mobileclass.flywithme.MainActivity;
 import com.mobileclass.flywithme.R;
 import com.mobileclass.flywithme.models.Post;
 import com.mobileclass.flywithme.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class GameViewMultiple extends SurfaceView implements Runnable {
 
     private static final String TAG = "NewPost";
     private static final String TAG_GET = "GetPost";
     private Thread thread;
-    private boolean isPlaying, isGameOver = false;
-    private int screenX, screenY, score = 0;
-    public static float screenRatioX, screenRatioY;
-    private Paint paint;
+    private boolean isPlaying, isGameOver = false, isExit = false, pressExit = false;
+    private int screenX, screenY;
+    public static float screenRatioX, screenRatioY, screenRatio;
+    private Paint paint, paintLeft, paintRight;
     private SharedPreferences prefs;
     private SoundPool soundPool;
     private List<BulletMultiple> bulletsLeft, bulletsRight;
     private int sound;
     private FlightMultiple flightLeft, flightRight;
     private GameActivityMultiple activity;
-    private BackgroundMultiple background1, background2;
+    private BackgroundMultiple background1;
 
     private DatabaseReference mDatabase;
     private DatabaseReference mPostReference;
+    Singleton singleton = Singleton.getInstance();
+    final String userId = getUid();
+    final String databaseChild = "user-posts";
+    private long scoreLeft = 0, scoreRight = 0;
+    final boolean isServer = Objects.equals(singleton.left, userId);
+    private boolean leftState = true, rightState = true;
+    Set<Long> playTimes = new HashSet<Long>();
+    boolean shootFlag = true, leftFlag = true, rightFlag = true;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
@@ -79,9 +90,9 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         this.screenY = screenY;
         screenRatioX = 1920f / screenX;
         screenRatioY = 1080f / screenY;
+        screenRatio = screenRatioY / screenRatioX;
 
         background1 = new BackgroundMultiple(screenX, screenY, getResources());
-        background2 = new BackgroundMultiple(screenX, screenY, getResources());
 
         flightLeft = new FlightMultiple(this, screenX, screenY, getResources(), true);
         flightRight = new FlightMultiple(this, screenX, screenY, getResources(), false);
@@ -89,33 +100,67 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         bulletsLeft = new ArrayList<>();
         bulletsRight = new ArrayList<>();
 
-        background2.x = screenX;
-
         paint = new Paint();
         paint.setTextSize(128);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
+        paintLeft = new Paint();
+        paintLeft.setTextSize(60);
+        paintLeft.setColor(Color.parseColor("#3B731E"));
+        paintRight = new Paint();
+        paintRight.setTextSize(60);
+        paintRight.setColor(Color.RED);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // Initialize Database
-        mPostReference = FirebaseDatabase.getInstance().getReference().child("posts");
+        mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
     }
 
 
     private void addPostEventListener(DatabaseReference mPostReference) {
-        // [START post_value_event_listener]
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                Log.w(TAG_GET, "post");
-                // ..
+                if (isGameOver || isExit)
+                    return;
+                Map<String, Map<String, Map<String, ?>>> postMap =
+                        (HashMap<String, Map<String, Map<String, ?>>>) dataSnapshot.getValue();
+                for (String user : postMap.keySet()) {
+                    boolean isLeftSignal = Objects.equals(user, singleton.left);
+                    if (!isLeftSignal && !Objects.equals(user, singleton.right))
+                        continue;
+                    Map<String, Map<String, ?>> datumMap = postMap.get(user);
+                    for (String key : datumMap.keySet()) {
+                        Map<String, ?> dataMap = datumMap.get(key);
+                        long time = (long) dataMap.get("time");
+                        Date date = new Date();
+                        if (playTimes.contains(time) || time < date.getTime() - 5000)
+                            continue;
+                        playTimes.add(time);
+                        if (isLeftSignal) {
+                            scoreLeft = (long) dataMap.get("scoreLeft");
+                            scoreRight = (long) dataMap.get("scoreRight");
+                            flightLeft.isGoingUp = (boolean) dataMap.get("bound");
+                            flightLeft.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
+                            leftState = (boolean) dataMap.get("left");
+                            rightState = (boolean) dataMap.get("right");
+                            if ((boolean) dataMap.get("end"))
+                                if (scoreLeft < 9 && scoreRight < 9)
+                                    isExit = true;
+                                else
+                                    isGameOver = true;
+                        } else {
+                            flightRight.isGoingUp = (boolean) dataMap.get("bound");
+                            flightRight.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
+                            isExit = (boolean) dataMap.get("end");
+                        }
+                    }
+                }
+                Log.w(TAG_GET, databaseChild);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
                 Log.w(TAG_GET, "loadPost:onCancelled", databaseError.toException());
             }
         };
@@ -126,43 +171,25 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
-
         while (isPlaying) {
-
             update ();
             draw ();
             sleep ();
-
         }
-
     }
 
     private void update () {
-
-        background1.x -= 10 * screenRatioX;
-        background2.x -= 10 * screenRatioX;
-
-        if (background1.x + background1.background.getWidth() < 0) {
-            background1.x = screenX;
-        }
-
-        if (background2.x + background2.background.getWidth() < 0) {
-            background2.x = screenX;
-        }
 
         if (flightLeft.isGoingUp)
             flightLeft.y -= 30 * screenRatioY;
         else
             flightLeft.y += 30 * screenRatioY;
 
-        if (flightLeft.y < 0)
-            flightLeft.y = 0;
-
-        if (flightLeft.y >= screenY - flightLeft.height)
-            flightLeft.y = screenY - flightLeft.height;
+        flightLeft.y = Math.max(130, flightLeft.y);
+        flightLeft.y = Math.min(screenY - flightLeft.height, flightLeft.y);
 
         flightRight.y += 30 * screenRatioY * (flightRight.isGoingUp ? -1 : 1);
-        flightRight.y = Math.max(0, flightRight.y);
+        flightRight.y = Math.max(130, flightRight.y);
         flightRight.y = Math.min(screenY - flightRight.height, flightRight.y);
 
         List<BulletMultiple> trash = new ArrayList<>();
@@ -170,22 +197,44 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         for (BulletMultiple bullet : bulletsLeft) {
             if (bullet.x > screenX)
                 trash.add(bullet);
-            bullet.x += 50 * screenRatioX;
-            if (Rect.intersects(flightLeft.getCollisionShape(),
-                    bullet.getCollisionShape())) {
-//                score++;
-//                isGameOver = true;
+            bullet.x += 40 * screenRatioX * screenRatio;
+            if (isServer && Rect.intersects(flightRight.getCollisionShape(),
+                    bullet.getCollisionShape()) && rightFlag) {
+                rightFlag = false;
+                composePost(scoreLeft + 1, scoreRight, false, false, true, false,
+                        scoreLeft > 7);
+                activity.runOnUiThread(() -> {
+                    new CountDownTimer(1000, 1000) {
+                        @Override
+                        public void onFinish() {
+                            rightFlag = true;
+                        }
+                        public void onTick(long millisUntilFinished) {
+                        }
+                    }.start();
+                });
             }
         }
 
         for (BulletMultiple bullet : bulletsRight) {
             if (bullet.x < 0)
                 trash.add(bullet);
-            bullet.x -= 50 * screenRatioX;
-            if (Rect.intersects(flightRight.getCollisionShape(),
-                    bullet.getCollisionShape())) {
-//                score++;
-//                isGameOver = true;
+            bullet.x -= 40 * screenRatioX * screenRatio;
+            if (isServer && Rect.intersects(flightLeft.getCollisionShape(),
+                    bullet.getCollisionShape()) && leftFlag) {
+                leftFlag = false;
+                composePost(scoreLeft, scoreRight + 1, false, false, false, true,
+                        scoreRight > 7);
+                activity.runOnUiThread(() -> {
+                    new CountDownTimer(1000, 1000) {
+                        @Override
+                        public void onFinish() {
+                            leftFlag = true;
+                        }
+                        public void onTick(long millisUntilFinished) {
+                        }
+                    }.start();
+                });
             }
         }
 
@@ -201,22 +250,31 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
             Canvas canvas = getHolder().lockCanvas();
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
-            canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            canvas.drawText(score + "", screenX / 2f, 164, paint);
+            canvas.drawText("Exit", 30, 70, pressExit ? paintRight : paintLeft);
+            canvas.drawText(scoreLeft + " - " + scoreRight, screenX / 2f - 164, 164, paint);
+            canvas.drawText(singleton.leftName, flightLeft.x, flightLeft.y - 20, paintLeft);
+            canvas.drawText(singleton.rightName, flightRight.x, flightRight.y - 20, paintRight);
 
-            if (isGameOver) {
+            canvas.drawBitmap(leftState ? flightLeft.getFlight(true) : flightLeft.getDead(),
+                        flightLeft.x, flightLeft.y, paint);
+            leftState = true;
+            canvas.drawBitmap(rightState ? flightRight.getFlight(false) : flightRight.getDead(),
+                        flightRight.x, flightRight.y, paint);
+            rightState = true;
+            if (isExit || isGameOver) {
+                String m = "You " + ((isServer && scoreLeft > scoreRight) ||
+                        (!isServer && scoreLeft < scoreRight) ? "win" : "lose");
+                if (isGameOver) {
+                    canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);
+                }
+                singleton.message = (isExit ? "Player exits" : m) +
+                        ". Choose partner to play.";
                 isPlaying = false;
-                canvas.drawBitmap(flightLeft.getDead(), flightLeft.x, flightLeft.y, paint);
-                canvas.drawBitmap(flightRight.getDead(), flightRight.x, flightRight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
-                saveIfHighScore();
-                waitBeforeExiting ();
+                waitBeforeExiting();
                 return;
             }
-
-            canvas.drawBitmap(flightLeft.getFlight(true), flightLeft.x, flightLeft.y, paint);
-            canvas.drawBitmap(flightRight.getFlight(false), flightRight.x, flightRight.y, paint);
 
             for (BulletMultiple bullet : bulletsLeft)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
@@ -230,26 +288,14 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     private void waitBeforeExiting() {
-
         try {
             Thread.sleep(3000);
-            activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void saveIfHighScore() {
-
-        if (prefs.getInt("highscore", 0) < score) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("highscore", score);
-            editor.apply();
-        }
-
-    }
 
     private void sleep () {
         try {
@@ -260,65 +306,54 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     public void resume () {
-
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
-
     }
 
     public void pause () {
-
         try {
             isPlaying = false;
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() < screenX / 2) {
-//                    flight.isGoingUp = true;
-//                    flight.toShoot++;
+                if (event.getX() < 400 && event.getY() < 200) {
+                    composePost(scoreLeft, scoreRight, false, false, true,
+                            true, true);
+                    pressExit = true;
+                    break;
                 }
-                final String userId = getUid();
-                mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                // Get user value
-                                User user = dataSnapshot.getValue(User.class);
+                boolean isShoot = (event.getX() < screenX / 2) != isServer;
+                if (!isShoot)
+                    composePost(scoreLeft, scoreRight, true, false,
+                            true, true, false);
+                else if (shootFlag) {
+                    shootFlag = false;
+                    new CountDownTimer(700, 700) {
+                        @Override
+                        public void onFinish() {
+                            shootFlag = true;
+                        }
+                        public void onTick(long millisUntilFinished) {
+                        }
+                    }.start();
+                    composePost(scoreLeft, scoreRight, false, true,
+                            true, true, false);
+                }
 
-                                if (user == null) {
-                                    // User is null, error out
-                                    Log.e(TAG, "User " + userId + " is unexpectedly null");
-                                    Toast.makeText(getContext(),
-                                            "Error: could not fetch user.",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // Write new post
-                                    writeNewPost(userId, user.username, Integer.toString(score), "test");
-                                }
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
                 break;
             case MotionEvent.ACTION_UP:
-//                flight.isGoingUp = false;
-                if (event.getX() > screenX / 2)
-//                    flight.toShoot++;
+                composePost(scoreLeft, scoreRight, false, false,
+                        true, true, false);
                 break;
         }
-
         return true;
     }
 
@@ -326,26 +361,24 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    private void writeNewPost(String userId, String username, String title, String body) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
+    private void writeNewPost(String username, long scoreLeft, long scoreRight, boolean bound,
+                              boolean shoot, boolean left, boolean right, boolean end) {
         String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body);
+        Date date = new Date();
+        Post post = new Post(userId, username, scoreLeft, scoreRight, bound, shoot, left, right,
+                end, date.getTime());
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+        childUpdates.put("/" + databaseChild + "/" + userId + "/" + key, postValues);
 
         mDatabase.updateChildren(childUpdates);
-        Log.w(TAG, "post");
+        Log.w(TAG, databaseChild);
     }
 
     public void newBulletLeft() {
-
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-
         BulletMultiple bullet = new BulletMultiple(getResources(), true);
         bullet.x = flightLeft.x + flightLeft.width;
         bullet.y = flightLeft.y + (flightLeft.height / 2);
@@ -353,13 +386,34 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     public void newBulletRight() {
-
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-
         BulletMultiple bullet = new BulletMultiple(getResources(), false);
-        bullet.x = flightRight.x + flightRight.width;
-        bullet.y = flightRight.y + (flightRight.height / 2);
+        bullet.x = flightRight.x;
+        bullet.y = flightRight.y + (flightRight.height / 2) + 35;
         bulletsRight.add(bullet);
+    }
+
+    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot, boolean left,
+                            boolean right, boolean end) {
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user == null) {
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+                            Toast.makeText(activity, "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            writeNewPost(user.username, scoreLeft, scoreRight, bound, shoot,
+                                    left, right, end);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
     }
 }

@@ -3,10 +3,19 @@ package com.mobileclass.flywithme;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,13 +24,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mobileclass.flywithme.models.Post;
+import com.mobileclass.flywithme.models.PostSelect;
 import com.mobileclass.flywithme.models.User;
+import com.mobileclass.flywithme.multiple.GameViewMultiple;
+import com.mobileclass.flywithme.multiple.Singleton;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class SelectPlayerActivity extends AppCompatActivity {
@@ -30,106 +43,225 @@ public class SelectPlayerActivity extends AppCompatActivity {
     private static final String TAG_GET = "GetPost";
     GridView usersGV;
     private DatabaseReference mDatabase;
-    private DatabaseReference mPostReference;
     Set<String> users = new HashSet<String>();
     final String userId = getUid();
     Handler handler = new Handler();
-    Runnable runnable;
-    int delay = 10000;
+
+    private Handler mHandler;
+
+    String databaseChild = "posts";
+    boolean isAsking = false;
+    String partner;
+    Singleton singleton = Singleton.getInstance();
+    Set<Long> askTimes = new HashSet<Long>();
+    boolean changeActivity = false;
+    Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_player);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         usersGV = findViewById(R.id.users);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mPostReference = FirebaseDatabase.getInstance().getReference().child("posts");
+        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
 
+        mHandler = new Handler();
+        startRepeatingTask();
+
+        usersGV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView userTV = view.findViewById(R.id.user);
+                partner = (String) userTV.getText();
+                isAsking = true;
+                view.setBackgroundColor(Color.GRAY);
+                composePost(partner, false, true, false, false);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setBackgroundColor(Color.WHITE);
+                    }
+                }, 200);
+                Toast.makeText(SelectPlayerActivity.this,
+                        "Waiting response of your partner.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
-        handler.postDelayed(runnable = new Runnable() {
-            public void run() {
-                handler.postDelayed(runnable, delay);
-                mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                // Get user value
-                                User user = dataSnapshot.getValue(User.class);
-
-                                if (user == null) {
-                                    // User is null, error out
-                                    Log.e(TAG, "User " + userId + " is unexpectedly null");
-                                    Toast.makeText(SelectPlayerActivity.this,
-                                            "Error: could not fetch user.",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // Write new post
-                                    writeNewPost(userId, user.username, "", "test");
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
-            }
-        }, delay);
         super.onResume();
+        if (singleton.message != null) {
+            Toast.makeText(SelectPlayerActivity.this, singleton.message, Toast.LENGTH_SHORT)
+                    .show();
+            singleton.message = null;
+            startRepeatingTask();
+            changeActivity = false;
+        }
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            if (isAsking)
+                return;
+            composePost("", true, false, false, false);
+            // 5 seconds by default, can be changed later
+            int mInterval = 3000;
+            mHandler.postDelayed(mStatusChecker, mInterval);
+        }
+    };
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 
     private void addPostEventListener(DatabaseReference mPostReference) {
-        // [START post_value_event_listener]
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (changeActivity)
+                    return;
                 // Get Post object and use the values to update the UI
-                Map<String, Map<String, String>> postMap =
-                        (HashMap<String, Map<String, String>>) dataSnapshot.getValue();
+                Map<String, Map<String, ?>> postMap =
+                        (HashMap<String, Map<String, ?>>) dataSnapshot.getValue();
                 for (String key : postMap.keySet()) {
-                    users.add(postMap.get(key).get("author"));
-                }
-                ArrayList<String> u = new ArrayList<>();
-                for (String i: users)
-                    u.add(i);
-                UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this, u);
-                usersGV.setAdapter(adapter);
-                Log.w(TAG_GET, "post");
-                // ..
-            }
+                    Map<String, ?> dataMap = postMap.get(key);
+                    String uid = (String) dataMap.get("uid");
+                    String authorName = (String) dataMap.get("author");
+                    String partnerName = (String) dataMap.get("partner");
+                    long time = (long)dataMap.get("time");
+                    String type = (String)dataMap.get("type");
+                    Date date = new Date();
+                    if (!Objects.equals(type, "select") ||
+                            Objects.equals(singleton.username, authorName) ||
+                            time < date.getTime() - 5000)
+                        continue;
+                    boolean wait = (boolean) dataMap.get("wait");
+                    if (wait)
+                        users.add(authorName);
+                    else if (Objects.equals(partnerName, singleton.username)) {
+                        boolean ask = (boolean) dataMap.get("ask");
+                        boolean accept = (boolean) dataMap.get("accept");
+                        if (ask && !askTimes.contains(time)) {
+                            buildAskDialog(uid, authorName, partnerName);
+                            askTimes.add(time);
+                        }
+                        if (accept) {
+                            stopRepeatingTask();
+                            changeActivity = true;
+                            singleton.left = userId;
+                            singleton.leftName = partnerName;
+                            singleton.right = uid;
+                            singleton.rightName = authorName;
+                            startActivity(new Intent(SelectPlayerActivity.this,
+                                    GameActivityMultiple.class));
+                        } else
+                            isAsking = false;
 
+                    }
+                }
+                ArrayList<String> usernames = new ArrayList<>();
+                usernames.addAll(users);
+                UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this,
+                        usernames);
+                usersGV.setAdapter(adapter);
+                Log.w(TAG_GET, "select post");
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
                 Log.w(TAG_GET, "loadPost:onCancelled", databaseError.toException());
             }
         };
         mPostReference.addValueEventListener(postListener);
-        // [END post_value_event_listener]
     }
 
     public String getUid() {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    private void writeNewPost(String userId, String username, String title, String body) {
-        // Create new post at /user-posts/$userid/$postid and at
-        // /posts/$postid simultaneously
-        String key = mDatabase.child("posts").push().getKey();
-        Post post = new Post(userId, username, title, body);
+    private void writeNewPost(String username, String partner, Boolean wait,
+                              Boolean ask, Boolean accept, Boolean connect) {
+        String key = mDatabase.child(databaseChild).push().getKey();
+        Date date = new Date();
+        PostSelect post = new PostSelect(userId, username, partner, wait, ask, accept, connect,
+                date.getTime());
         Map<String, Object> postValues = post.toMap();
-
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-
+        childUpdates.put("/" + databaseChild + "/" + key, postValues);
         mDatabase.updateChildren(childUpdates);
-        Log.w(TAG, "post");
+        Log.w(TAG, "select post");
+    }
+
+    private void buildAskDialog(String uid, String partnerName, String userName) {
+        new AlertDialog.Builder(SelectPlayerActivity.this)
+            .setTitle(partnerName + " challenge you. Do you join?")
+            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    composePost(partnerName, false, false, true, false);
+                    stopRepeatingTask();
+                    changeActivity = true;
+                    singleton.left = uid;
+                    singleton.right = userId;
+                    singleton.leftName = partnerName;
+                    singleton.rightName = userName;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(SelectPlayerActivity.this,
+                                    GameActivityMultiple.class));
+                        }
+                    }, 1000);
+                }
+            })
+            .setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    composePost(partnerName, true, false, false, false);
+                }
+            }).show();
+    }
+
+    public void composePost(String partnerName, Boolean wait, Boolean ask, Boolean accept,
+                            Boolean connect) {
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user == null) {
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+                            Toast.makeText(SelectPlayerActivity.this,
+                                    "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            writeNewPost(user.username, partnerName, wait, ask, accept, connect);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
     }
 
 }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mobileclass.flywithme.models.User;
+import com.mobileclass.flywithme.multiple.Singleton;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,11 +33,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
+    Singleton x = Singleton.getInstance();
+    Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
@@ -46,6 +52,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         etEmail = findViewById(R.id.fieldEmail);
         etPassword = findViewById(R.id.fieldPassword);
         mProgressBar = findViewById(R.id.progressBar);
+
+        backBtn = findViewById(R.id.backBtn1);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                finish();
+            }
+        });
     }
 
     private void signIn() {
@@ -57,7 +71,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         showProgressBar();
 //        String email = etEmail.getText().toString();
 //        String password = etPassword.getText().toString();
-        String email = "a@mail.com";
+        String email = "b@b.com";
         String password = "123456";
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -115,7 +129,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 startActivity(new Intent(SignInActivity.this, SelectPlayerActivity.class));
-                finish();
+//                finish();
             }
         }, 1000);
     }
@@ -128,7 +142,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
-            return email.split("@")[0];
+            x.username = email.split("@")[0];
+            return x.username;
         } else {
             return email;
         }

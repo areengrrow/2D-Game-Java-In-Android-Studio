@@ -10,20 +10,31 @@ import java.util.Map;
 public class Post {
     public String uid;
     public String author;
-    public String title;
-    public String body;
-    public int starCount = 0;
-    public Map<String, Boolean> stars = new HashMap<>();
+    public long scoreLeft;
+    public long scoreRight;
+    public long time;
+    public boolean bound;
+    public boolean shoot;
+    public boolean left;
+    public boolean right;
+    public boolean end;
 
     public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
-    public Post(String uid, String author, String title, String body) {
+    public Post(String uid, String author, long scoreLeft, long scoreRight, boolean bound,
+                boolean shoot, boolean left, boolean right, boolean leftWin, long time) {
         this.uid = uid;
         this.author = author;
-        this.title = title;
-        this.body = body;
+        this.scoreLeft = scoreLeft;
+        this.scoreRight = scoreRight;
+        this.bound = bound;
+        this.shoot = shoot;
+        this.left = left;
+        this.right = right;
+        this.end = leftWin;
+        this.time = time;
     }
 
     @Exclude
@@ -31,10 +42,14 @@ public class Post {
         HashMap<String, Object> result = new HashMap<>();
         result.put("uid", uid);
         result.put("author", author);
-        result.put("title", title);
-        result.put("body", body);
-        result.put("starCount", starCount);
-        result.put("stars", stars);
+        result.put("scoreLeft", scoreLeft);
+        result.put("scoreRight", scoreRight);
+        result.put("time", time);
+        result.put("bound", bound);
+        result.put("shoot", shoot);
+        result.put("left", left);
+        result.put("right", right);
+        result.put("end", end);
 
         return result;
     }

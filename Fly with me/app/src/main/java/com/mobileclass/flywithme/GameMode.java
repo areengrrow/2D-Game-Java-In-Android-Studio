@@ -37,7 +37,7 @@ public class GameMode extends AppCompatActivity {
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(GameMode.this, MainActivity2.class));
+                startActivity(new Intent(GameMode.this, SingleMode.class));
             }
         });
 

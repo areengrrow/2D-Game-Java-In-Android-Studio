@@ -10,7 +10,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MainActivity2 extends AppCompatActivity {
+public class SingleMode extends AppCompatActivity {
 
     private boolean isMute;
     @Override
@@ -20,33 +20,33 @@ public class MainActivity2 extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_single_mode);
 
         findViewById(R.id.theme).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity2.this, ChooseTheme.class));
+                startActivity(new Intent(SingleMode.this, ChooseTheme.class));
             }
         });
 
-        findViewById(R.id.mode).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.character).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity2.this, GameMode.class));
+                startActivity(new Intent(SingleMode.this, ChooseCharater.class));
             }
         });
 
         findViewById(R.id.store).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity2.this, Store.class));
+                startActivity(new Intent(SingleMode.this, Store.class));
             }
         });
 
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity2.this, MainActivity.class));
+                startActivity(new Intent(SingleMode.this, MainActivity.class));
             }
         });
 

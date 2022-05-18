@@ -28,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // modified by Phong
                 // startActivity(new Intent(MainActivity.this, GameActivity.class));
-                startActivity(new Intent(MainActivity.this, MainActivity2.class));
+                startActivity(new Intent(MainActivity.this, SingleMode.class));
             }
         });
 
         TextView highScoreTxt = findViewById(R.id.highScoreTxt);
 
         final SharedPreferences prefs = getSharedPreferences("game", MODE_PRIVATE);
-        highScoreTxt.setText("HighScore: " + prefs.getInt("highscore", 0));
+        //highScoreTxt.setText("HighScore: " + prefs.getInt("highscore", 0));
 
         isMute = prefs.getBoolean("isMute", false);
 

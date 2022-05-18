@@ -22,23 +22,24 @@
         android:layout_centerHorizontal="true"/>
 
     <TextView
+        android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play"
-        android:textSize="64sp"
         android:layout_centerInParent="true"
+        android:text="Single"
         android:textColor="#000000"
-        android:id="@+id/play"/>
+        android:textSize="40sp" />
 
     <TextView
+        android:id="@+id/multiple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:layout_below="@id/play"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="4dp"
+        android:text="Multiple"
         android:textColor="#000000"
-        android:text="High Score"
-        android:id="@+id/highScoreTxt"
-        android:layout_margin="16dp"
-        android:layout_alignParentRight="true"/>
+        android:textSize="40sp" />
 
     <ImageView
         android:layout_width="36dp"

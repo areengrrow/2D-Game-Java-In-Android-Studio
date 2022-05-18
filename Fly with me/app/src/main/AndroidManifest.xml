@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
 
-            android:name=".MainActivity2"
+            android:name=".SingleMode"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.noActionBar"/>
 

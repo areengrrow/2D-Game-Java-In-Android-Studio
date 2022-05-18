@@ -32,6 +32,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.multiple).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SignInActivity.class));
+            }
+        });
+
         TextView highScoreTxt = findViewById(R.id.highScoreTxt);
 
         final SharedPreferences prefs = getSharedPreferences("game", MODE_PRIVATE);

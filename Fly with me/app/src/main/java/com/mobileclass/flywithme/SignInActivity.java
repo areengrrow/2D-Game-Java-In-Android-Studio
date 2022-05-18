@@ -53,11 +53,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         etPassword = findViewById(R.id.fieldPassword);
         mProgressBar = findViewById(R.id.progressBar);
 
-        backBtn = findViewById(R.id.backBtn1);
-        backBtn.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.back2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                finish();
+                finish();
             }
         });
     }

@@ -93,8 +93,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
             }
         });
 
-        backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.back5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();

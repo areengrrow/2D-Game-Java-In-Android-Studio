@@ -37,9 +37,9 @@ public class ChooseTheme extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(1);
                 assassin.setImageResource(R.drawable.assassinscreed_back);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
-                palace.setImageResource(R.drawable.palace_choose);
-                nature.setImageResource(R.drawable.nature_choose);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
+                palace.setImageResource(R.drawable.palace_back);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -47,10 +47,10 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(2);
-                assassin.setImageResource(R.drawable.assasin_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
                 fantasy.setImageResource(R.drawable.fantasyart_back);
-                palace.setImageResource(R.drawable.palace_choose);
-                nature.setImageResource(R.drawable.nature_choose);
+                palace.setImageResource(R.drawable.palace_back);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -58,10 +58,10 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(3);
-                assassin.setImageResource(R.drawable.assasin_choose);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
                 palace.setImageResource(R.drawable.palace_back);
-                nature.setImageResource(R.drawable.nature_choose);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -69,9 +69,9 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(4);
-                assassin.setImageResource(R.drawable.assasin_choose);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
-                palace.setImageResource(R.drawable.palace_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
+                palace.setImageResource(R.drawable.palace_back);
                 nature.setImageResource(R.drawable.nature_back);
                 return false;
             }

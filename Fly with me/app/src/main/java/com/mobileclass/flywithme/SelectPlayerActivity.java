@@ -54,7 +54,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     boolean isAsking = false;
     String partner;
     Singleton singleton = Singleton.getInstance();
-    Set<Long> askTimes = new HashSet<Long>();
+    Set<Long> selectTimes = new HashSet<Long>();
     boolean changeActivity = false;
     Button backBtn;
 
@@ -149,23 +149,21 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     String uid = (String) dataMap.get("uid");
                     String authorName = (String) dataMap.get("author");
                     String partnerName = (String) dataMap.get("partner");
-                    long time = (long)dataMap.get("time");
-                    String type = (String)dataMap.get("type");
+                    long selectTime = (long)dataMap.get("time");
                     Date date = new Date();
-                    if (!Objects.equals(type, "select") ||
+                    if (selectTimes.contains(selectTime) ||
                             Objects.equals(singleton.username, authorName) ||
-                            time < date.getTime() - 5000)
+                            selectTime < date.getTime() - 5000)
                         continue;
+                    selectTimes.add(selectTime);
                     boolean wait = (boolean) dataMap.get("wait");
                     if (wait && !Objects.equals(singleton.username, authorName))
                         users.add(authorName);
                     else if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");
-                        if (ask && !askTimes.contains(time)) {
+                        if (ask)
                             buildAskDialog(uid, authorName, partnerName);
-                            askTimes.add(time);
-                        }
                         if (accept) {
                             stopRepeatingTask();
                             changeActivity = true;
@@ -231,7 +229,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             startActivity(new Intent(SelectPlayerActivity.this,
                                     GameActivityMultiple.class));
                         }
-                    }, 1000);
+                    }, 300);
                 }
             })
             .setNegativeButton("Reject", new DialogInterface.OnClickListener() {

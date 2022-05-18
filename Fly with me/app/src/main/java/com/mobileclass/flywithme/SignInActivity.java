@@ -64,9 +64,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void signIn() {
         Log.d(TAG, "signIn");
-//        if (!validateForm()) {
-//            return;
-//        }
+        if (!validateForm()) {
+            return;
+        }
 
         showProgressBar();
         String email = etEmail.getText().toString();

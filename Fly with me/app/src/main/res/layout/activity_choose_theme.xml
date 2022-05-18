@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/assassinscreed_back" />
+        app:srcCompat="@drawable/assasin_choose" />
 
     <ImageView
         android:id="@+id/fantastic_back"
@@ -66,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/fantasyart_back" />
+        app:srcCompat="@drawable/fantasy_choose" />
 
     <ImageView
         android:id="@+id/nature_back"
@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nature_back" />
+        app:srcCompat="@drawable/nature_choose" />
 
     <ImageView
         android:id="@+id/palace_back"
@@ -94,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/palace_back" />
+        app:srcCompat="@drawable/palace_choose" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 <!--</RelativeLayout>-->

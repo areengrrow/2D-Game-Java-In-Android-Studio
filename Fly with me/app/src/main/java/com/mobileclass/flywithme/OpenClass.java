@@ -1,11 +1,20 @@
+//package com.mobileclass.flywithme;
+//public class OpenClass {
+//
+//}
 package com.mobileclass.flywithme;
 
 public class OpenClass {
-    private static int theme;
-    private static int gold;
-    private static String name;
+    public static int theme = 0;
+    public static long pages = 1053;
+    public void setTheme(int num)
+    {
+        theme = num;
+    }
 
-    public void setTheme(int THEME) {theme = THEME;}
+    public int getTheme()
+    {
 
-    public int getTheme() { return theme;}
+        return theme;
+    }
 }

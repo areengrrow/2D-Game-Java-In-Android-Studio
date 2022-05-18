@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // modified by Phong
                 // startActivity(new Intent(MainActivity.this, GameActivity.class));
-                startActivity(new Intent(MainActivity.this, ChooseTheme.class));
+                startActivity(new Intent(MainActivity.this, MainActivity2.class));
             }
         });
 

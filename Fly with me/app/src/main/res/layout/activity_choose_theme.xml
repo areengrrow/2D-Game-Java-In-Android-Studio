@@ -38,17 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/button_back" />
 
-    <ImageView
-        android:id="@+id/next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="682dp"
-        android:layout_marginBottom="300dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/button_next" />
+
 
     <ImageView
         android:id="@+id/asasin_back"
@@ -62,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/assasin_choose" />
+        app:srcCompat="@drawable/assassinscreed_back" />
 
     <ImageView
         android:id="@+id/fantastic_back"
@@ -76,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/fantasy_choose" />
+        app:srcCompat="@drawable/fantasyart_back" />
 
     <ImageView
         android:id="@+id/nature_back"
@@ -90,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nature_choose" />
+        app:srcCompat="@drawable/nature_back" />
 
     <ImageView
         android:id="@+id/palace_back"
@@ -104,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/palace_choose" />
+        app:srcCompat="@drawable/palace_back" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 <!--</RelativeLayout>-->

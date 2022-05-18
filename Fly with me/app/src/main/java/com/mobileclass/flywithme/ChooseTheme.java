@@ -20,7 +20,6 @@ public class ChooseTheme extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose_theme);
         back = findViewById(R.id.back);
-        next = findViewById(R.id.next);
         assassin = findViewById(R.id.asasin_back);
         fantasy = findViewById(R.id.fantastic_back);
         palace = findViewById(R.id.palace_back);
@@ -28,25 +27,19 @@ public class ChooseTheme extends AppCompatActivity {
         back.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseTheme.this, MainActivity.class));
+                startActivity(new Intent(ChooseTheme.this, MainActivity2.class));
                 return false;
             }
         });
-        next.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseTheme.this, GameActivity.class));
-                return false;
-            }
-        });
+
         assassin.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(1);
                 assassin.setImageResource(R.drawable.assassinscreed_back);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
-                palace.setImageResource(R.drawable.palace_choose);
-                nature.setImageResource(R.drawable.nature_choose);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
+                palace.setImageResource(R.drawable.palace_back);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -54,10 +47,10 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(2);
-                assassin.setImageResource(R.drawable.assasin_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
                 fantasy.setImageResource(R.drawable.fantasyart_back);
-                palace.setImageResource(R.drawable.palace_choose);
-                nature.setImageResource(R.drawable.nature_choose);
+                palace.setImageResource(R.drawable.palace_back);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -65,10 +58,10 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(3);
-                assassin.setImageResource(R.drawable.assasin_choose);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
                 palace.setImageResource(R.drawable.palace_back);
-                nature.setImageResource(R.drawable.nature_choose);
+                nature.setImageResource(R.drawable.nature_back);
                 return false;
             }
         });
@@ -76,9 +69,9 @@ public class ChooseTheme extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setTheme(4);
-                assassin.setImageResource(R.drawable.assasin_choose);
-                fantasy.setImageResource(R.drawable.fantasy_choose);
-                palace.setImageResource(R.drawable.palace_choose);
+                assassin.setImageResource(R.drawable.assassinscreed_back);
+                fantasy.setImageResource(R.drawable.fantasyart_back);
+                palace.setImageResource(R.drawable.palace_back);
                 nature.setImageResource(R.drawable.nature_back);
                 return false;
             }

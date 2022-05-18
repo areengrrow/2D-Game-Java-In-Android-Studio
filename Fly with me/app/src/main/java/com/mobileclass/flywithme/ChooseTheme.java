@@ -19,7 +19,6 @@ public class ChooseTheme extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose_theme);
         back = findViewById(R.id.back);
-        next = findViewById(R.id.next);
         assassin = findViewById(R.id.asasin_back);
         fantasy = findViewById(R.id.fantastic_back);
         palace = findViewById(R.id.palace_back);
@@ -27,17 +26,11 @@ public class ChooseTheme extends AppCompatActivity {
         back.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseTheme.this, MainActivity.class));
+                startActivity(new Intent(ChooseTheme.this, MainActivity2.class));
                 return false;
             }
         });
-        next.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseTheme.this, GameActivity.class));
-                return false;
-            }
-        });
+
         assassin.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

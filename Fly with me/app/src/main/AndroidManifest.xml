@@ -9,10 +9,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MainActivity2"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar"/>
+        <activity
             android:name=".ChooseTheme"
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.noActionBar" />
+
+        <activity
+            android:name=".GameMode"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
+
+        <activity
+            android:name=".Store"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
+
         <activity
             android:name=".SelectPlayerActivity"
             android:exported="false"

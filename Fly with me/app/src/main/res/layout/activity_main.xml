@@ -19,7 +19,6 @@
         android:text="I Have To Fly!"
         android:textColor="#ffffff"
         android:layout_above="@id/play"
-        android:layout_below="@id/highScoreTxt"
         android:layout_centerHorizontal="true"/>
 
     <TextView

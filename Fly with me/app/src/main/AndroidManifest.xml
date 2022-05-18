@@ -19,6 +19,11 @@
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.noActionBar" />
+        <activity
+            android:name=".ChooseCharacter"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.noActionBar" />
 
         <activity
             android:name=".GameMode"

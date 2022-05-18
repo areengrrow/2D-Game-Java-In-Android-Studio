@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 public class SingleMode extends AppCompatActivity {
 
     private boolean isMute;
+    ImageView start;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,11 +31,19 @@ public class SingleMode extends AppCompatActivity {
                 startActivity(new Intent(SingleMode.this, ChooseTheme.class));
             }
         });
+        start = findViewById(R.id.start);
+        start.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(SingleMode.this, GameActivity.class));
+                return false;
+            }
+        });
 
         findViewById(R.id.character).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SingleMode.this, ChooseCharater.class));
+                startActivity(new Intent(SingleMode.this, ChooseCharacter.class));
             }
         });
 

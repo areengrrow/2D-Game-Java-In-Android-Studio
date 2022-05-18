@@ -4,10 +4,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import com.mobileclass.flywithme.OpenClass;
 
 
 public class Flight {
-
+    OpenClass my_flight = new OpenClass();
     int toShoot = 0;
     boolean isGoingUp = false;
     int x, y, width, height, wingCounter = 0, shootCounter = 1;
@@ -17,9 +18,18 @@ public class Flight {
     Flight (GameView gameView, int screenY, Resources res) {
 
         this.gameView = gameView;
-
-        flight1 = BitmapFactory.decodeResource(res, R.drawable.fly_red1);
-        flight2 = BitmapFactory.decodeResource(res, R.drawable.fly_red2);
+        if(my_flight.getCharacter() == 0) {
+            flight1 = BitmapFactory.decodeResource(res, R.drawable.fly1);
+            flight2 = BitmapFactory.decodeResource(res, R.drawable.fly2);
+            shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot1);
+            dead = BitmapFactory.decodeResource(res, R.drawable.dead);
+        }
+        else {
+            flight1 = BitmapFactory.decodeResource(res, R.drawable.fly_red1);
+            flight2 = BitmapFactory.decodeResource(res, R.drawable.fly_red2);
+            shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red1);
+            dead = BitmapFactory.decodeResource(res, R.drawable.dead_red);
+        }
 
         width = flight1.getWidth();
         height = flight1.getHeight();
@@ -33,7 +43,7 @@ public class Flight {
         flight1 = Bitmap.createScaledBitmap(flight1, width, height, false);
         flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
 
-        shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red1);
+//        shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red1);
 //        shoot2 = BitmapFactory.decodeResource(res, R.drawable.shoot2);
 //        shoot3 = BitmapFactory.decodeResource(res, R.drawable.shoot3);
 //        shoot4 = BitmapFactory.decodeResource(res, R.drawable.shoot4);
@@ -45,7 +55,7 @@ public class Flight {
 //        shoot4 = Bitmap.createScaledBitmap(shoot4, width, height, false);
 //        shoot5 = Bitmap.createScaledBitmap(shoot5, width, height, false);
 
-        dead = BitmapFactory.decodeResource(res, R.drawable.dead_red);
+//        dead = BitmapFactory.decodeResource(res, R.drawable.dead_red);
         dead = Bitmap.createScaledBitmap(dead, width, height, false);
 
         y = screenY / 2;

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +55,6 @@ public class SelectPlayerActivity extends AppCompatActivity {
     Singleton singleton = Singleton.getInstance();
     Set<Long> selectTimes = new HashSet<Long>();
     boolean changeActivity = false;
-    Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +94,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
         findViewById(R.id.back5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                stopRepeatingTask();
                 finish();
             }
         });
@@ -182,6 +181,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this,
                         usernames);
                 usersGV.setAdapter(adapter);
+                findViewById(R.id.textView).setVisibility(usernames.isEmpty() ? View.VISIBLE :
+                        View.INVISIBLE);
                 Log.w(TAG_GET, "select post");
             }
             @Override

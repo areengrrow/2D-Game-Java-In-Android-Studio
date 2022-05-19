@@ -94,8 +94,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
         findViewById(R.id.back5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                composePost("", false, false, false, false);
                 stopRepeatingTask();
+                composePost("", false, false, false, false);
                 finish();
             }
         });
@@ -220,8 +220,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
             .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    composePost(partnerName, false, false, true, false);
                     stopRepeatingTask();
+                    composePost(partnerName, false, false, true, false);
                     changeActivity = true;
                     singleton.left = uid;
                     singleton.right = userId;

@@ -94,6 +94,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
         findViewById(R.id.back5).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                composePost("", false, false, false, false);
                 stopRepeatingTask();
                 finish();
             }
@@ -155,8 +156,11 @@ public class SelectPlayerActivity extends AppCompatActivity {
                         continue;
                     selectTimes.add(selectTime);
                     boolean wait = (boolean) dataMap.get("wait");
-                    if (wait && !Objects.equals(singleton.username, authorName))
-                        users.add(authorName);
+                    if (!Objects.equals(singleton.username, authorName))
+                        if (wait)
+                            users.add(authorName);
+                        else
+                            users.remove(authorName);
                     else if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");

@@ -78,7 +78,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 partner = (String) userTV.getText();
                 isAsking = true;
                 view.setBackgroundColor(Color.GRAY);
-                composePost(partner, false, true, false, false);
+                composePost(partner, true, true, false, false);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -155,18 +155,17 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             selectTime < date.getTime() - 5000)
                         continue;
                     selectTimes.add(selectTime);
-                    boolean wait = (boolean) dataMap.get("wait");
                     if (!Objects.equals(singleton.username, authorName))
-                        if (wait)
+                        if ((boolean) dataMap.get("wait"))
                             users.add(authorName);
                         else
                             users.remove(authorName);
-                    else if (Objects.equals(partnerName, singleton.username)) {
+                    if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");
                         if (ask)
                             buildAskDialog(uid, authorName, partnerName);
-                        if (accept) {
+                        else if (accept) {
                             stopRepeatingTask();
                             changeActivity = true;
                             singleton.left = userId;
@@ -177,11 +176,9 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     GameActivityMultiple.class));
                         } else
                             isAsking = false;
-
                     }
                 }
-                ArrayList<String> usernames = new ArrayList<>();
-                usernames.addAll(users);
+                ArrayList<String> usernames = new ArrayList<>(users);
                 UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this,
                         usernames);
                 usersGV.setAdapter(adapter);

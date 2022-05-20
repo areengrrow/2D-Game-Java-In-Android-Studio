@@ -2,6 +2,8 @@ package com.mobileclass.flywithme.multiple;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -251,6 +253,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             Canvas canvas = getHolder().lockCanvas();
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
 
+            prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
+            Bitmap sound = BitmapFactory.decodeResource(getResources(),
+                    prefs.getBoolean("isMute", false) ? R.drawable.volume_off :
+                            R.drawable.volume_on);
+            sound = Bitmap.createScaledBitmap(sound, 60, 60, false);
+            canvas.drawBitmap(sound, screenX - 160, 30, paint);
+
             canvas.drawText("Exit", 30, 70, pressExit ? paintRight : paintLeft);
             canvas.drawText(scoreLeft + " - " + scoreRight, screenX / 2f - 164, 164, paint);
             canvas.drawText(singleton.leftName, flightLeft.x, flightLeft.y - 20, paintLeft);
@@ -322,10 +331,16 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() < 400 && event.getY() < 200) {
-                    composePost(scoreLeft, scoreRight, false, false, true,
-                            true, true);
-                    pressExit = true;
+                if (event.getY() < 150) {
+                    if (event.getX() < 300) {
+                        composePost(scoreLeft, scoreRight, false, false, true,
+                                true, true);
+                        pressExit = true;
+                    } else if (event.getX() > screenX - 300) {
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("isMute", !prefs.getBoolean("isMute", false));
+                        editor.apply();
+                    }
                     break;
                 }
                 boolean isShoot = (event.getX() < screenX / 2) != isServer;

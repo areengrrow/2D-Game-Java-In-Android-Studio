@@ -147,7 +147,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                             leftState = (boolean) dataMap.get("left");
                             rightState = (boolean) dataMap.get("right");
                             if ((boolean) dataMap.get("end"))
-                                if (scoreLeft < 9 && scoreRight < 9)
+                                if (scoreLeft < 5 && scoreRight < 5)
                                     isExit = true;
                                 else
                                     isGameOver = true;
@@ -204,7 +204,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     bullet.getCollisionShape()) && rightFlag) {
                 rightFlag = false;
                 composePost(scoreLeft + 1, scoreRight, false, false, true, false,
-                        scoreLeft > 7);
+                        scoreLeft > 3);
                 activity.runOnUiThread(() -> {
                     new CountDownTimer(1000, 1000) {
                         @Override
@@ -226,7 +226,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     bullet.getCollisionShape()) && leftFlag) {
                 leftFlag = false;
                 composePost(scoreLeft, scoreRight + 1, false, false, false, true,
-                        scoreRight > 7);
+                        scoreRight > 3);
                 activity.runOnUiThread(() -> {
                     new CountDownTimer(1000, 1000) {
                         @Override

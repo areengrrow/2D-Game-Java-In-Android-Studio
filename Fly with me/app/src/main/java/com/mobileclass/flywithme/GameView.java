@@ -3,6 +3,8 @@ package com.mobileclass.flywithme;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -196,6 +198,11 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
+            Bitmap background;
+            background = BitmapFactory.decodeResource(getResources(), R.drawable.button_back);
+            canvas.drawBitmap(background, 10, 60, paint);
+
+
             for (Bird bird : birds)
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
 
@@ -275,6 +282,10 @@ public class GameView extends SurfaceView implements Runnable {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (event.getX() < 200 && event.getY() < 100) {
+                    activity.finish();
+                    break;
+                }
                 if (event.getX() < screenX / 2) {
                     flight.isGoingUp = true;
                     flight.toShoot++;

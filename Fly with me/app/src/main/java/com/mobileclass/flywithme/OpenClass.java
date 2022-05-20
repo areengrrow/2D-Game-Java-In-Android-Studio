@@ -5,7 +5,7 @@
 package com.mobileclass.flywithme;
 
 public class OpenClass {
-    public static int theme = 0;
+    public static int theme = 1;
     public static int character = 0;
     public static long pages = 1053;
     public void setTheme(int num)

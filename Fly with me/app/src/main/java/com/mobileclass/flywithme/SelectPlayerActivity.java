@@ -167,6 +167,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             buildAskDialog(uid, authorName, partnerName);
                         else if (accept) {
                             stopRepeatingTask();
+                            composePost(partnerName, false, false, false, true);
                             changeActivity = true;
                             singleton.left = userId;
                             singleton.leftName = partnerName;

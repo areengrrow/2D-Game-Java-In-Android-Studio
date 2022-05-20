@@ -25,6 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+
     <ImageView
         android:id="@+id/back"
         android:layout_width="wrap_content"
@@ -33,15 +34,14 @@
         android:layout_marginBottom="300dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.229"
         app:srcCompat="@drawable/button_back" />
 
-
-
     <ImageView
-        android:id="@+id/pilot"
+        android:id="@+id/assasin"
         android:layout_width="250dp"
         android:layout_height="150dp"
         android:layout_marginStart="111dp"
@@ -50,8 +50,10 @@
         android:layout_marginBottom="232dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.66"
         app:srcCompat="@drawable/assassinscreed_back" />
 
     <ImageView
@@ -64,8 +66,10 @@
         android:layout_marginBottom="232dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.275"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.66"
         app:srcCompat="@drawable/fantasyart_back" />
 
     <ImageView
@@ -78,12 +82,14 @@
         android:layout_marginBottom="51dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.275"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.747"
         app:srcCompat="@drawable/nature_back" />
 
     <ImageView
-        android:id="@+id/flash"
+        android:id="@+id/palace"
         android:layout_width="250dp"
         android:layout_height="150dp"
         android:layout_marginStart="111dp"
@@ -92,8 +98,10 @@
         android:layout_marginBottom="51dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.747"
         app:srcCompat="@drawable/palace_back" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

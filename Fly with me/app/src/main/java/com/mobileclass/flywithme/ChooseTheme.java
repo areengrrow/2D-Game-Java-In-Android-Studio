@@ -19,9 +19,9 @@ public class ChooseTheme extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose_theme);
         back = findViewById(R.id.back);
-        assassin = findViewById(R.id.pilot);
+        assassin = findViewById(R.id.assasin);
         fantasy = findViewById(R.id.fantastic_back);
-        palace = findViewById(R.id.flash);
+        palace = findViewById(R.id.palace);
         nature = findViewById(R.id.nature_back);
         back.setOnTouchListener(new View.OnTouchListener() {
             @Override

@@ -15,16 +15,17 @@ public class OpenClass {
     }
     public int getTheme()
     {
+
         return theme;
     }
     public void setCharacter(int num)
     {
-
         character = num;
     }
     public int getCharacter()
     {
-        return theme;
+
+        return character;
     }
 
 }

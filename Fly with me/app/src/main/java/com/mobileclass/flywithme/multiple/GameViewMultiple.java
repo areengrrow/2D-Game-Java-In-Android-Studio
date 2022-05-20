@@ -253,7 +253,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             Canvas canvas = getHolder().lockCanvas();
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
 
-            prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
             Bitmap sound = BitmapFactory.decodeResource(getResources(),
                     prefs.getBoolean("isMute", false) ? R.drawable.volume_off :
                             R.drawable.volume_on);

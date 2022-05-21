@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 public class ChooseCharacter extends AppCompatActivity {
     OpenClass data = new OpenClass();
-    ImageView back, pilot, flash, my_character;
+    ImageView back, pilot, flash, my_character, play, store;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,13 +20,29 @@ public class ChooseCharacter extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         back = findViewById(R.id.back);
+        play = findViewById(R.id.play_game);
         pilot = findViewById(R.id.pilot);
         flash = findViewById(R.id.flash);
         my_character = findViewById(R.id.my_character);
+        store = findViewById(R.id.cha_store);
         back.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseCharacter.this, SingleMode.class));
+                startActivity(new Intent(ChooseCharacter.this, ChooseTheme.class));
+                return false;
+            }
+        });
+        play.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(ChooseCharacter.this, GameActivity.class));
+                return false;
+            }
+        });
+        store.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(ChooseCharacter.this, Store.class));
                 return false;
             }
         });

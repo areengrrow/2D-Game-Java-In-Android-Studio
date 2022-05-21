@@ -199,8 +199,8 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
             Bitmap background;
-            background = BitmapFactory.decodeResource(getResources(), R.drawable.button_back);
-            canvas.drawBitmap(background, 10, 60, paint);
+            background = BitmapFactory.decodeResource(getResources(), R.drawable.pause_btn);
+            canvas.drawBitmap(background, 2000, 0, paint);
 
 
             for (Bird bird : birds)
@@ -282,7 +282,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() < 200 && event.getY() < 100) {
+                if (event.getX() > 2000 && event.getY() < 200) {
                     activity.finish();
                     break;
                 }

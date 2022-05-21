@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 public class ChooseTheme extends AppCompatActivity {
     OpenClass data = new OpenClass();
-    ImageView back, next, assassin, fantasy, palace, nature;
+    ImageView back, next, assassin, fantasy, palace, nature, store;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,18 +19,33 @@ public class ChooseTheme extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose_theme);
         back = findViewById(R.id.back);
+        next =findViewById(R.id.next);
         assassin = findViewById(R.id.assasin);
         fantasy = findViewById(R.id.fantastic_back);
         palace = findViewById(R.id.palace);
         nature = findViewById(R.id.nature_back);
+        store = findViewById(R.id.theme_store);
         back.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(ChooseTheme.this, SingleMode.class));
+                startActivity(new Intent(ChooseTheme.this, MainActivity.class));
                 return false;
             }
         });
-
+        next.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(ChooseTheme.this, ChooseCharacter.class));
+                return false;
+            }
+        });
+        store.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                startActivity(new Intent(ChooseTheme.this, Store.class));
+                return false;
+            }
+        });
         assassin.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

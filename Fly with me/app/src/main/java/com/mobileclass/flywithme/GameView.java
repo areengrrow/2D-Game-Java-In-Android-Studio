@@ -61,6 +61,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         sound = soundPool.load(activity, R.raw.shoot, 1);
 
+
+
         this.screenX = screenX;
         this.screenY = screenY;
         screenRatioX = 1920f / screenX;
@@ -231,7 +233,9 @@ public class GameView extends SurfaceView implements Runnable {
     private void waitBeforeExiting() {
 
         try {
-            Thread.sleep(3000);
+            sound = soundPool.load(activity, R.raw.go_up, 1);
+            soundPool.play(sound, 1, 1, 0, 0, 2);
+            Thread.sleep(30000000);
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
         } catch (InterruptedException e) {
@@ -283,7 +287,7 @@ public class GameView extends SurfaceView implements Runnable {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getX() > 2000 && event.getY() < 200) {
-                    activity.finish();
+                    pause();
                     break;
                 }
                 if (event.getX() < screenX / 2) {
@@ -304,7 +308,7 @@ public class GameView extends SurfaceView implements Runnable {
     public void newBullet() {
 
         if (!prefs.getBoolean("isMute", false))
-            soundPool.play(sound, 1, 1, 0, 0, 1);
+            soundPool.play(sound, 1, 1, 0, 0, 2);
 
         Bullet bullet = new Bullet(getResources());
         bullet.x = flight.x + flight.width;

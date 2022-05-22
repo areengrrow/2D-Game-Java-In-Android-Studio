@@ -8,6 +8,7 @@ public class OpenClass {
     public static int theme = 1;
     public static int character = 0;
     public static long pages = 1053;
+    public static boolean home = false;
     public void setTheme(int num)
     {
 
@@ -26,6 +27,13 @@ public class OpenClass {
     {
 
         return character;
+    }
+
+    public boolean go_home(){
+        return home;
+    }
+    public void set_home(){
+        home = true;
     }
 
 }

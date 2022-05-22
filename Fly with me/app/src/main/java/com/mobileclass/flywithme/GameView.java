@@ -15,6 +15,7 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import com.mobileclass.flywithme.OpenClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,8 @@ public class GameView extends SurfaceView implements Runnable {
     private Flight flight;
     private GameActivity activity;
     private Background background1, background2;
+
+    OpenClass data = new OpenClass();
 
     public GameView(GameActivity activity, int screenX, int screenY) {
         super(activity);
@@ -200,9 +203,9 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            Bitmap background;
-            background = BitmapFactory.decodeResource(getResources(), R.drawable.pause_btn);
-            canvas.drawBitmap(background, 2000, 0, paint);
+            Bitmap pause;
+            pause = BitmapFactory.decodeResource(getResources(), R.drawable.pause_btn);
+            canvas.drawBitmap(pause, 2000, 0, paint);
 
 
             for (Bird bird : birds)
@@ -235,7 +238,7 @@ public class GameView extends SurfaceView implements Runnable {
         try {
             sound = soundPool.load(activity, R.raw.go_up, 1);
             soundPool.play(sound, 1, 1, 0, 0, 2);
-            Thread.sleep(30000000);
+            Thread.sleep(300);
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
         } catch (InterruptedException e) {
@@ -281,24 +284,41 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() > 2000 && event.getY() < 200) {
+                if (event.getX() >= 2000 && event.getY() <= 200) {
+                    Canvas canvas = getHolder().lockCanvas();
+                    Bitmap menu_home, menu_continue;
+                    menu_home = BitmapFactory.decodeResource(getResources(), R.drawable.menu_home);
+                    menu_continue = BitmapFactory.decodeResource(getResources(), R.drawable.menu_continue);
+                    canvas.drawBitmap(menu_home, screenX/3, screenY/3, paint);
+                    canvas.drawBitmap(menu_continue, screenX/2, screenY/3, paint);
+                    getHolder().unlockCanvasAndPost(canvas);
                     pause();
-                    break;
+                    if(event.getX() > screenX/3 && event.getY() >= screenY/3 &&event.getY() <= screenY/3+100 )
+                    {
+                        activity.startActivity(new Intent(activity, MainActivity.class));
+                        activity.finish();
+                    }
                 }
-                if (event.getX() < screenX / 2) {
+                if(event.getX() < screenX / 2) {
                     flight.isGoingUp = true;
                     flight.toShoot++;
+                    resume();
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 flight.isGoingUp = false;
                 if (event.getX() > screenX / 2)
+                {
                     flight.toShoot++;
+                }
+
                 break;
         }
 

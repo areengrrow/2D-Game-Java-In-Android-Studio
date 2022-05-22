@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -67,6 +68,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     private boolean leftState = true, rightState = true;
     Set<Long> playTimes = new HashSet<Long>();
     boolean shootFlag = true, leftFlag = true, rightFlag = true;
+    MediaPlayer mediaPlayer;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
@@ -173,6 +175,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
+        if (!prefs.getBoolean("isMute", false)) {
+            mediaPlayer = MediaPlayer.create(activity, R.raw.go_up);
+            mediaPlayer.start();
+            mediaPlayer.setLooping(true);
+        }
         while (isPlaying) {
             update ();
             draw ();
@@ -339,6 +346,12 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putBoolean("isMute", !prefs.getBoolean("isMute", false));
                         editor.apply();
+                        if (!prefs.getBoolean("isMute", false)) {
+                            mediaPlayer = MediaPlayer.create(activity, R.raw.go_up);
+                            mediaPlayer.start();
+                            mediaPlayer.setLooping(true);
+                        } else
+                            mediaPlayer.stop();
                     }
                     break;
                 }

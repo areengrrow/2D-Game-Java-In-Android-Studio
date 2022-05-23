@@ -37,6 +37,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Flight flight;
     private GameActivity activity;
     private Background background1, background2;
+    private static int extendX = 250, extendY = 100;
 
     OpenClass data = new OpenClass();
 
@@ -71,8 +72,8 @@ public class GameView extends SurfaceView implements Runnable {
         screenRatioX = 1920f / screenX;
         screenRatioY = 1080f / screenY;
 
-        background1 = new Background(screenX, screenY, getResources());
-        background2 = new Background(screenX, screenY, getResources());
+        background1 = new Background(screenX + extendX, screenY + extendY, getResources());
+        background2 = new Background(screenX + extendX, screenY + extendY, getResources());
 
         flight = new Flight(this, screenY, getResources());
 
@@ -115,11 +116,11 @@ public class GameView extends SurfaceView implements Runnable {
         background1.x -= 10 * screenRatioX;
         background2.x -= 10 * screenRatioX;
 
-        if (background1.x + background1.background.getWidth() < 0) {
+        if (background1.x + background1.background.getWidth() < extendX) {
             background1.x = screenX;
         }
 
-        if (background2.x + background2.background.getWidth() < 0) {
+        if (background2.x + background2.background.getWidth() < extendX) {
             background2.x = screenX;
         }
 

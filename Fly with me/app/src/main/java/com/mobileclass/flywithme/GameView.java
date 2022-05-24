@@ -214,14 +214,14 @@ public class GameView extends SurfaceView implements Runnable {
 
             canvas.drawText(score + "", screenX / 2f, 164, paint);
 
-            if (isGameOver) {
-                isPlaying = false;
-                canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
-                getHolder().unlockCanvasAndPost(canvas);
-                saveIfHighScore();
-                waitBeforeExiting ();
-                return;
-            }
+//            if (isGameOver) {
+//                isPlaying = false;
+//                canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+//                getHolder().unlockCanvasAndPost(canvas);
+//                saveIfHighScore();
+//                waitBeforeExiting ();
+//                return;
+//            }
 
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
 
@@ -267,7 +267,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume () {
-
+        isPause = false;
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
@@ -277,12 +277,17 @@ public class GameView extends SurfaceView implements Runnable {
     public void pause () {
 
         try {
+            isPause = true;
             isPlaying = false;
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+    }
+    boolean isPause = false;
+    private boolean isPause(){
+        return isPause;
     }
 
 
@@ -292,30 +297,48 @@ public class GameView extends SurfaceView implements Runnable {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getX() >= 2000 && event.getY() <= 200) {
+                if (event.getX() >= 2000 && event.getY() <= 200 ) {
                     Canvas canvas = getHolder().lockCanvas();
                     Bitmap menu_home, menu_continue;
                     menu_home = BitmapFactory.decodeResource(getResources(), R.drawable.menu_home);
                     menu_continue = BitmapFactory.decodeResource(getResources(), R.drawable.menu_continue);
-                    canvas.drawBitmap(menu_home, screenX/3, screenY/3, paint);
-                    canvas.drawBitmap(menu_continue, screenX/2, screenY/3, paint);
+                    canvas.drawBitmap(menu_continue, screenX / 3, screenY / 3, paint);
+                    canvas.drawBitmap(menu_home, screenX / 2, screenY / 3, paint);
                     getHolder().unlockCanvasAndPost(canvas);
                     pause();
-                    if(event.getX() > screenX/3 && event.getY() >= screenY/3 &&event.getY() <= screenY/3+100 )
-                    {
-                        activity.startActivity(new Intent(activity, MainActivity.class));
-                        activity.finish();
+
+                    if (event.getX() < screenX / 2 && event.getY() <= screenY / 2) {
+                        flight.isGoingUp = true;
+                        flight.toShoot++;
+                        resume();
                     }
                 }
+
+
+                if(event.getX() <= screenX / 2){
+
+//                            && event.getY() >= screenY/3 &&event.getY() <= screenY/3+100 )
+//                            resume();
+//                            activity.startActivity(new Intent(activity, MainActivity.class));
+//                            activity.finish();
+                            flight.isGoingUp = true;
+                            flight.toShoot++;
+                            resume();
+                }
+
+
                 if(event.getX() < screenX / 2) {
-                    flight.isGoingUp = true;
-                    flight.toShoot++;
-                    resume();
+                    if(!isPause())
+                    {
+                        flight.isGoingUp = true;
+                        flight.toShoot++;
+                        resume();
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 flight.isGoingUp = false;
-                if (event.getX() > screenX / 2)
+                if (event.getX() >= screenX /2 )
                 {
                     flight.toShoot++;
                 }

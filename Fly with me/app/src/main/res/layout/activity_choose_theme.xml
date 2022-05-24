@@ -70,7 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.64"
-        app:srcCompat="@drawable/nature_back" />
+        app:srcCompat="@drawable/nature_choose" />
 
     <ImageView
         android:id="@+id/palace"
@@ -86,7 +86,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.64"
-        app:srcCompat="@drawable/palace_back" />
+        app:srcCompat="@drawable/palace_choose" />
 
     <ImageView
         android:id="@+id/fantastic_back"
@@ -102,7 +102,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.553"
-        app:srcCompat="@drawable/fantasyart_back" />
+        app:srcCompat="@drawable/fantasy_choose" />
 
     <ImageView
         android:id="@+id/next"

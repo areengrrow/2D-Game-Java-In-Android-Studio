@@ -12,8 +12,8 @@ public class FlightMultiple {
 
     int toShoot = 0;
     boolean isGoingUp = false;
-    int x, y, width, height;
-    Bitmap flight1, shoot1, dead;
+    int x, y, width, height, wingCounter = 0;
+    Bitmap flight1, flight2, shoot1, dead;
     private GameViewMultiple gameView;
 
     FlightMultiple(GameViewMultiple gameView, int screenX, int screenY, Resources res, boolean isLeft) {
@@ -21,6 +21,7 @@ public class FlightMultiple {
         this.gameView = gameView;
 
         flight1 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.fly1 : R.drawable.fly_red1_flip);
+        flight2 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.fly2 : R.drawable.fly_red2_flip);
 
         width = flight1.getWidth();
         height = flight1.getHeight();
@@ -32,9 +33,8 @@ public class FlightMultiple {
         height = (int) (height * GameViewMultiple.screenRatioY);
 
         flight1 = Bitmap.createScaledBitmap(flight1, width, height, false);
-
+        flight2 = Bitmap.createScaledBitmap(flight2, width, height, false);
         shoot1 = BitmapFactory.decodeResource(res, isLeft ? R.drawable.shoot1 : R.drawable.shoot_red1_flip);
-
         shoot1 = Bitmap.createScaledBitmap(shoot1, width, height, false);
 
         dead = BitmapFactory.decodeResource(res, isLeft ? R.drawable.dead : R.drawable.dead_red_flip);
@@ -54,7 +54,13 @@ public class FlightMultiple {
                 gameView.newBulletRight();
             return shoot1;
         }
-        return flight1;
+        if (wingCounter == 0) {
+            wingCounter++;
+            return flight1;
+        }
+        wingCounter--;
+
+        return flight2;
     }
 
     Rect getCollisionShape () {

@@ -63,7 +63,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     Singleton singleton = Singleton.getInstance();
     final String userId = getUid();
     final String databaseChild = "user-posts";
-    private long scoreLeft = 0, scoreRight = 0;
     final boolean isServer = Objects.equals(singleton.left, userId);
     private boolean leftState = true, rightState = true;
     Set<Long> playTimes = new HashSet<Long>();
@@ -142,14 +141,16 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                             continue;
                         playTimes.add(time);
                         if (isLeftSignal) {
-                            scoreLeft = Math.max(scoreLeft, (long) dataMap.get("scoreLeft"));
-                            scoreRight = Math.max(scoreRight, (long) dataMap.get("scoreRight"));
+                            singleton.scoreLeft = Math.max(singleton.scoreLeft,
+                                    (long) dataMap.get("scoreLeft"));
+                            singleton.scoreRight = Math.max(singleton.scoreRight,
+                                    (long) dataMap.get("scoreRight"));
                             flightLeft.isGoingUp = (boolean) dataMap.get("bound");
                             flightLeft.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
                             leftState = (boolean) dataMap.get("left");
                             rightState = (boolean) dataMap.get("right");
                             if ((boolean) dataMap.get("end"))
-                                if (scoreLeft < 5 && scoreRight < 5)
+                                if (singleton.scoreLeft < 5 && singleton.scoreRight < 5)
                                     isExit = true;
                                 else
                                     isGameOver = true;
@@ -210,8 +211,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             if (isServer && Rect.intersects(flightRight.getCollisionShape(),
                     bullet.getCollisionShape()) && rightFlag) {
                 rightFlag = false;
-                composePost(scoreLeft + 1, scoreRight, false, false, true, false,
-                        scoreLeft > 3);
+                composePost(singleton.scoreLeft + 1, singleton.scoreRight, false,
+                        false, true, false, singleton.scoreLeft > 3);
                 activity.runOnUiThread(() -> {
                     new CountDownTimer(1000, 1000) {
                         @Override
@@ -232,8 +233,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             if (isServer && Rect.intersects(flightLeft.getCollisionShape(),
                     bullet.getCollisionShape()) && leftFlag) {
                 leftFlag = false;
-                composePost(scoreLeft, scoreRight + 1, false, false, false, true,
-                        scoreRight > 3);
+                composePost(singleton.scoreLeft, singleton.scoreRight + 1, false,
+                        false, false, true, singleton.scoreRight > 3);
                 activity.runOnUiThread(() -> {
                     new CountDownTimer(1000, 1000) {
                         @Override
@@ -267,7 +268,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             canvas.drawBitmap(sound, screenX - 160, 30, paint);
 
             canvas.drawText("Exit", 30, 70, pressExit ? paintRight : paintLeft);
-            canvas.drawText(scoreLeft + " - " + scoreRight, screenX / 2f - 164, 164, paint);
+            canvas.drawText(singleton.scoreLeft + " - " + singleton.scoreRight,
+                    screenX / 2f - 164, 164, paint);
             canvas.drawText(singleton.leftName, flightLeft.x, flightLeft.y - 20, paintLeft);
             canvas.drawText(singleton.rightName, flightRight.x, flightRight.y - 20, paintRight);
 
@@ -279,8 +281,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             rightState = true;
             if (isExit || isGameOver || pressExit) {
                 String m = (isExit || pressExit) ? "Player exits" :
-                        ("You " + ((isServer && scoreLeft > scoreRight) ||
-                                (!isServer && scoreLeft < scoreRight) ? "win" : "lose"));
+                        ("You " + ((isServer && singleton.scoreLeft > singleton.scoreRight) ||
+                                (!isServer && singleton.scoreLeft < singleton.scoreRight) ? "win" : "lose"));
                 canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);
                 singleton.message = m + ". Choose partner to play.";
                 isPlaying = false;
@@ -339,8 +341,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
                 if (event.getY() < 150) {
                     if (event.getX() < 300) {
-                        composePost(scoreLeft, scoreRight, false, false, true,
-                                true, true);
+                        composePost(singleton.scoreLeft, singleton.scoreRight, false,
+                                false, true, true, true);
                         pressExit = true;
                     } else if (event.getX() > screenX - 300) {
                         SharedPreferences.Editor editor = prefs.edit();
@@ -357,7 +359,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 }
                 boolean isShoot = (event.getX() < screenX / 2) != isServer;
                 if (!isShoot)
-                    composePost(scoreLeft, scoreRight, true, false,
+                    composePost(singleton.scoreLeft, singleton.scoreRight, true, false,
                             true, true, false);
                 else if (shootFlag) {
                     shootFlag = false;
@@ -369,13 +371,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         public void onTick(long millisUntilFinished) {
                         }
                     }.start();
-                    composePost(scoreLeft, scoreRight, false, true,
+                    composePost(singleton.scoreLeft, singleton.scoreRight, false, true,
                             true, true, false);
                 }
 
                 break;
             case MotionEvent.ACTION_UP:
-                composePost(scoreLeft, scoreRight, false, false,
+                composePost(singleton.scoreLeft, singleton.scoreRight, false, false,
                         true, true, false);
                 break;
         }

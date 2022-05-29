@@ -12,6 +12,7 @@ public class Singleton {
     public String right;
     public String left;
     public String message;
+    public long scoreLeft, scoreRight;
 
     // Constructor
     // Here we will be creating private constructor

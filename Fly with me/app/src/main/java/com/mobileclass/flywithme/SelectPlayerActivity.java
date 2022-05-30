@@ -173,6 +173,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             singleton.leftName = partnerName;
                             singleton.right = uid;
                             singleton.rightName = authorName;
+                            singleton.scoreLeft = 0;
+                            singleton.scoreRight = 0;
                             startActivity(new Intent(SelectPlayerActivity.this,
                                     GameActivityMultiple.class));
                         } else
@@ -225,6 +227,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     singleton.right = userId;
                     singleton.leftName = partnerName;
                     singleton.rightName = userName;
+                    singleton.scoreLeft = 0;
+                    singleton.scoreRight = 0;
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

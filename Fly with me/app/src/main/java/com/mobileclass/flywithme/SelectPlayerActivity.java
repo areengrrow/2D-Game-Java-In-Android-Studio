@@ -143,17 +143,16 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     return;
                 Map<String, Map<String, ?>> postMap =
                         (HashMap<String, Map<String, ?>>) dataSnapshot.getValue();
+                Date date = new Date();
                 for (String key : postMap.keySet()) {
                     Map<String, ?> dataMap = postMap.get(key);
                     long selectTime = (long) dataMap.get("time");
-                    Date date = new Date();
-                    if (selectTime < date.getTime() - 5000 ||
-                            selectTimes.contains(selectTime))
+                    if (selectTime < date.getTime() - 5000 || selectTimes.contains(selectTime))
                         continue;
+                    selectTimes.add(selectTime);
                     String authorName = (String) dataMap.get("author");
                     if (Objects.equals(singleton.username, authorName))
                         continue;
-                    selectTimes.add(selectTime);
                     String partnerName = (String) dataMap.get("partner");
                     if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");

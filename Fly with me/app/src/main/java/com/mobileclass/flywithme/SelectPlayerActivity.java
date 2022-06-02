@@ -141,34 +141,24 @@ public class SelectPlayerActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (changeActivity)
                     return;
-                // Get Post object and use the values to update the UI
                 Map<String, Map<String, ?>> postMap =
                         (HashMap<String, Map<String, ?>>) dataSnapshot.getValue();
                 for (String key : postMap.keySet()) {
                     Map<String, ?> dataMap = postMap.get(key);
-                    String authorName = (String) dataMap.get("author");
-                    long selectTime = (long)dataMap.get("time");
+                    long selectTime = (long) dataMap.get("time");
                     Date date = new Date();
-                    if (selectTimes.contains(selectTime) ||
-                            Objects.equals(singleton.username, authorName) ||
-                            selectTime < date.getTime() - 5000)
+                    if (selectTime < date.getTime() - 5000 ||
+                            selectTimes.contains(selectTime))
+                        continue;
+                    String authorName = (String) dataMap.get("author");
+                    if (Objects.equals(singleton.username, authorName))
                         continue;
                     selectTimes.add(selectTime);
                     String partnerName = (String) dataMap.get("partner");
-                    String uid = (String) dataMap.get("uid");
-                    if (!Objects.equals(singleton.username, authorName)) {
-                        boolean isWait = (boolean) dataMap.get("wait");
-                        if (isWait && !users.contains(authorName)) {
-                            users.add(authorName);
-                            changeUsers = true;
-                        } else if (!isWait && users.contains(authorName)) {
-                            users.remove(authorName);
-                            changeUsers = true;
-                        }
-                    }
                     if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");
+                        String uid = (String) dataMap.get("uid");
                         if (ask)
                             buildAskDialog(uid, authorName, partnerName);
                         else if (accept) {
@@ -185,6 +175,14 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     GameActivityMultiple.class));
                         } else
                             isAsking = false;
+                    }
+                    boolean isWait = (boolean) dataMap.get("wait");
+                    if (isWait && !users.contains(authorName)) {
+                        users.add(authorName);
+                        changeUsers = true;
+                    } else if (!isWait && users.contains(authorName)) {
+                        users.remove(authorName);
+                        changeUsers = true;
                     }
                 }
                 if (changeUsers) {

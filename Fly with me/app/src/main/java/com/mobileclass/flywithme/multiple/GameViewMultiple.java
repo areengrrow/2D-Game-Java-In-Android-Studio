@@ -76,16 +76,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
         prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_GAME)
-                    .build();
-            soundPool = new SoundPool.Builder()
-                    .setAudioAttributes(audioAttributes)
-                    .build();
-        } else
-            soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .build();
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(audioAttributes)
+                .build();
 
         sound = soundPool.load(activity, R.raw.shoot, 1);
 
@@ -137,7 +134,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         Map<String, ?> dataMap = datumMap.get(key);
                         long time = (long) dataMap.get("time");
                         Date date = new Date();
-                        if (playTimes.contains(time) || time < date.getTime() - 5000)
+                        if (time < date.getTime() - 5000 || playTimes.contains(time))
                             continue;
                         playTimes.add(time);
                         if (isLeftSignal) {

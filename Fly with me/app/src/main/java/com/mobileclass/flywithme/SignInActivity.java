@@ -33,8 +33,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
-    Singleton x = Singleton.getInstance();
-    Button backBtn;
+    Singleton singleton = Singleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +127,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 startActivity(new Intent(SignInActivity.this, SelectPlayerActivity.class));
-//                finish();
             }
         }, 1000);
     }
@@ -141,8 +139,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
-            x.username = email.split("@")[0];
-            return x.username;
+            singleton.username = email.split("@")[0];
+            return singleton.username;
         } else {
             return email;
         }

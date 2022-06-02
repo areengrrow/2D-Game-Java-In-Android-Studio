@@ -129,10 +129,7 @@ public class GameView extends SurfaceView implements Runnable {
             bird.x -= bird.speed;
             if (bird.x + bird.width < 0) {
                 if (!bird.wasShot) {
-<<<<<<< HEAD
-=======
 //                    isGameOver = true;
->>>>>>> refs/remotes/origin/main
                     return;
                 }
                 int bound = (int) (30 * screenRatioX);
@@ -144,11 +141,8 @@ public class GameView extends SurfaceView implements Runnable {
                 bird.wasShot = false;
             }
             if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape())) {
-<<<<<<< HEAD
-=======
 
 //                isGameOver = true;
->>>>>>> refs/remotes/origin/main
                 return;
             }
         }
@@ -162,10 +156,7 @@ public class GameView extends SurfaceView implements Runnable {
             Bitmap pause;
             pause = BitmapFactory.decodeResource(getResources(), R.drawable.pause_btn);
             canvas.drawBitmap(pause, 2000, 0, paint);
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/main
             if (isPause) {
                 Bitmap menu_home, menu_continue;
                 menu_home = BitmapFactory.decodeResource(getResources(), R.drawable.menu_home);
@@ -173,17 +164,11 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(menu_continue, screenX / 3, screenY / 3, paint);
                 canvas.drawBitmap(menu_home, screenX / 2, screenY / 3, paint);
             }
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/main
             for (Bird bird : birds)
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
             canvas.drawText(score + "", screenX / 2f, 164, paint);
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/main
             if (isGameOver) {
                 isPlaying = false;
                 canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
@@ -192,10 +177,7 @@ public class GameView extends SurfaceView implements Runnable {
                 waitBeforeExiting ();
                 return;
             }
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/main
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
             for (Bullet bullet : bullets)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
@@ -237,10 +219,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume () {
-<<<<<<< HEAD
-=======
 //        isPause = false;
->>>>>>> refs/remotes/origin/main
         isPlaying = true;
         thread = new Thread(this);
         thread.start();
@@ -250,10 +229,7 @@ public class GameView extends SurfaceView implements Runnable {
     public void pause () {
 
         try {
-<<<<<<< HEAD
-=======
 //            isPause = true;
->>>>>>> refs/remotes/origin/main
             isPlaying = false;
             thread.join();
         } catch (InterruptedException e) {
@@ -262,14 +238,11 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
     boolean isPause = false;
-<<<<<<< HEAD
-=======
 //    private boolean isPause(){
 //        return isPause;
 //    }
 
 
->>>>>>> refs/remotes/origin/main
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -287,10 +260,7 @@ public class GameView extends SurfaceView implements Runnable {
 //                    canvas.drawBitmap(menu_home, screenX / 2, screenY / 3, paint);
 //                    getHolder().unlockCanvasAndPost(canvas);
 //                    pause();
-<<<<<<< HEAD
-=======
 
->>>>>>> refs/remotes/origin/main
 //                    if (event.getX() < screenX / 2 && event.getY() <= screenY / 2) {
 //                        flight.isGoingUp = true;
 //                        flight.toShoot++;
@@ -323,10 +293,6 @@ public class GameView extends SurfaceView implements Runnable {
                         break;
                     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/remotes/origin/main
 //                if(event.getX() <= screenX / 2){
 //
 //                            && event.getY() >= screenY/3 &&event.getY() <= screenY/3+100 )
@@ -339,17 +305,6 @@ public class GameView extends SurfaceView implements Runnable {
 //                }
 
 
-<<<<<<< HEAD
-                if(event.getX() < screenX / 2) {
-                    if(!isPause)
-                    {
-                        flight.isGoingUp = true;
-                        flight.toShoot++;
-                        resume();
-                    }
-                }
-                if (event.getX() >= screenX /2 && !isPause)
-=======
 //                if(event.getX() < screenX / 2) {
 //                    if(!isPause())
 //                    {
@@ -359,7 +314,6 @@ public class GameView extends SurfaceView implements Runnable {
 //                    }
 //                }
                 if (event.getX() >= screenX /2 )
->>>>>>> refs/remotes/origin/main
                 {
                     flight.toShoot++;
                 }

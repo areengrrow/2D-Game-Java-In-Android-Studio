@@ -43,7 +43,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     GridView usersGV;
     private DatabaseReference mDatabase;
     private DatabaseReference mPostReference;
-    Set<String> users = new HashSet<String>();
+    ArrayList<String> users = new ArrayList<>();
     final String userId = getUid();
     Handler handler = new Handler();
 
@@ -54,7 +54,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     String partner;
     Singleton singleton = Singleton.getInstance();
     Set<Long> selectTimes = new HashSet<Long>();
-    boolean changeActivity = false;
+    boolean changeActivity = false, changeUsers = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +108,11 @@ public class SelectPlayerActivity extends AppCompatActivity {
             Toast.makeText(SelectPlayerActivity.this, singleton.message, Toast.LENGTH_SHORT)
                     .show();
             singleton.message = null;
-            startRepeatingTask();
-            changeActivity = false;
-            addPostEventListener(mPostReference);
         }
+        composePost("", true, false, false, false);
+        startRepeatingTask();
+        changeActivity = false;
+        addPostEventListener(mPostReference);
     }
 
     Runnable mStatusChecker = new Runnable() {
@@ -155,11 +156,16 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     selectTimes.add(selectTime);
                     String partnerName = (String) dataMap.get("partner");
                     String uid = (String) dataMap.get("uid");
-                    if (!Objects.equals(singleton.username, authorName))
-                        if ((boolean) dataMap.get("wait"))
+                    if (!Objects.equals(singleton.username, authorName)) {
+                        boolean isWait = (boolean) dataMap.get("wait");
+                        if (isWait && !users.contains(authorName)) {
                             users.add(authorName);
-                        else
+                            changeUsers = true;
+                        } else if (!isWait && users.contains(authorName)) {
                             users.remove(authorName);
+                            changeUsers = true;
+                        }
+                    }
                     if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");
@@ -181,12 +187,13 @@ public class SelectPlayerActivity extends AppCompatActivity {
                             isAsking = false;
                     }
                 }
-                ArrayList<String> usernames = new ArrayList<>(users);
-                UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this,
-                        usernames);
-                usersGV.setAdapter(adapter);
-                findViewById(R.id.textView).setVisibility(usernames.isEmpty() ? View.VISIBLE :
-                        View.INVISIBLE);
+                if (changeUsers) {
+                    UserGVAdapter adapter = new UserGVAdapter(SelectPlayerActivity.this,
+                            users);
+                    usersGV.setAdapter(adapter);
+                    findViewById(R.id.textView).setVisibility(users.isEmpty() ? View.VISIBLE :
+                            View.INVISIBLE);
+                }
                 Log.w(TAG_GET, "select post");
             }
             @Override

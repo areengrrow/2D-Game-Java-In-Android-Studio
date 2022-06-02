@@ -129,7 +129,7 @@ public class GameView extends SurfaceView implements Runnable {
             bird.x -= bird.speed;
             if (bird.x + bird.width < 0) {
                 if (!bird.wasShot) {
-//                    isGameOver = true;
+                    isGameOver = true;
                     return;
                 }
                 int bound = (int) (30 * screenRatioX);
@@ -142,7 +142,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
             if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape())) {
 
-//                isGameOver = true;
+                isGameOver = true;
                 return;
             }
         }
@@ -305,14 +305,9 @@ public class GameView extends SurfaceView implements Runnable {
 //                }
 
 
-//                if(event.getX() < screenX / 2) {
-//                    if(!isPause())
-//                    {
-//                        flight.isGoingUp = true;
-//                        flight.toShoot++;
-//                        resume();
-//                    }
-//                }
+                if(event.getX() < screenX / 2) {
+                    flight.isGoingUp = true;
+                }
                 if (event.getX() >= screenX /2 )
                 {
                     flight.toShoot++;

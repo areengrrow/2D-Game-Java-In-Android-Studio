@@ -280,9 +280,11 @@ public class GameView extends SurfaceView implements Runnable {
                         }
                     }
                 }
+
                 if (event.getX() >= screenX / 2 && !isPause) {
                     flight.toShoot++;
                 }
+
                 if (event.getX() < screenX / 2) {
                     flight.isGoingUp = true;
                 }
@@ -290,27 +292,29 @@ public class GameView extends SurfaceView implements Runnable {
                     flight.toShoot++;
                 } else {
                     if (event.getX() >= screenX / 3 && event.getX() <= screenX / 2
-                            && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
-                        isPause = false;
-                        resume();
-                        break;
-                    } else if (event.getX() >= screenX / 2 && event.getX() <= screenX / 2 + screenX / 8
-                            && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
-                        isPause = false;
-                        isGameOver = true;
-                        resume();
-                        break;
+                                    && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
+                                isPause = false;
+                                resume();
+                                break;
+                            } else if (event.getX() >= screenX / 2 && event.getX() <= screenX / 2 + screenX / 8
+                                    && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
+                                isPause = false;
+                                isGameOver = true;
+                                resume();
+                                break;
+                            }
+                        }
+                            break;
+        case MotionEvent.ACTION_UP:
+                            flight.isGoingUp = false;
+                            break;
                     }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                flight.isGoingUp = false;
-                break;
 
-            return true;
+                    return true;
+                }
         }
 
-        public void newBullet() {
+        public void newBullet () {
 
             if (!prefs.getBoolean("isMute", false))
                 soundPool.play(sound, 1, 1, 0, 0, 2);

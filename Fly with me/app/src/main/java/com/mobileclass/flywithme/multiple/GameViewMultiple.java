@@ -131,10 +131,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                         continue;
                     Map<String, Map<String, ?>> datumMap = postMap.get(user);
                     Date date = new Date();
+                    long currentTime = date.getTime() - 5000;
                     for (String key : datumMap.keySet()) {
                         Map<String, ?> dataMap = datumMap.get(key);
                         long time = (long) dataMap.get("time");
-                        if (time < date.getTime() - 5000 || playTimes.contains(time))
+                        if (time < currentTime || playTimes.contains(time))
                             continue;
                         playTimes.add(time);
                         if (isLeftSignal) {

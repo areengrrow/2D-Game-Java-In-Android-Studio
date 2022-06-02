@@ -144,10 +144,11 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 Map<String, Map<String, ?>> postMap =
                         (HashMap<String, Map<String, ?>>) dataSnapshot.getValue();
                 Date date = new Date();
+                long currentTime = date.getTime() - 5000;
                 for (String key : postMap.keySet()) {
                     Map<String, ?> dataMap = postMap.get(key);
                     long selectTime = (long) dataMap.get("time");
-                    if (selectTime < date.getTime() - 5000 || selectTimes.contains(selectTime))
+                    if (selectTime < currentTime || selectTimes.contains(selectTime))
                         continue;
                     selectTimes.add(selectTime);
                     String authorName = (String) dataMap.get("author");

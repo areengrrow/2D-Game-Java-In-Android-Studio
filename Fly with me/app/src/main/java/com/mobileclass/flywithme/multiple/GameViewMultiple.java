@@ -356,7 +356,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                             mediaPlayer.start();
                             mediaPlayer.setLooping(true);
                         } else
-                            mediaPlayer.stop();
+                            if (mediaPlayer != null)
+                                mediaPlayer.stop();
                     }
                     break;
                 }

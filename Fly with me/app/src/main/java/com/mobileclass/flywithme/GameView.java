@@ -136,7 +136,6 @@ public class GameView extends SurfaceView implements Runnable {
             bird.x -= bird.speed;
             if (bird.x + bird.width < 0) {
                 if (!bird.wasShot) {
-
                     isGameOver = true;
                     return;
                 }
@@ -202,7 +201,7 @@ public class GameView extends SurfaceView implements Runnable {
         try {
             sound = soundPool.load(activity, R.raw.go_up, 1);
             soundPool.play(sound, 1, 1, 0, 0, 2);
-            Thread.sleep(3000git);
+            Thread.sleep(300);
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
         } catch (InterruptedException e) {
@@ -236,6 +235,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void pause () {
         try {
+
             isPlaying = false;
             thread.join();
         } catch (InterruptedException e) {
@@ -246,43 +246,49 @@ public class GameView extends SurfaceView implements Runnable {
     boolean isPause = false;
 
 
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!isPause){
-                    if(event.getX() >= screenX / 2 && event.getY() <= 200 ){
+                if (!isPause) {
+                    if (event.getX() >= screenX / 2 && event.getY() <= 200) {
                         isPause = true;
-                        break;
-                    }
-                    if(event.getX() < screenX / 2) {
-                        if(!isPause)
-                        {
-                            flight.isGoingUp = true;
-                            flight.toShoot++;
-                            resume();
+
+                        if (!isPause && event.getX() >= screenX / 2 && event.getY() <= 200) {
+                            isPause = true;
+                            break;
+                        }
+                        if (isPause)
+                            if (event.getX() < screenX / 2) {
+                                isPause = false;
+                                resume();
+                                break;
+                            } else {
+                                isGameOver = true;
+                                resume();
+                                break;
+                            }
+                        if (event.getX() < screenX / 2) {
+                            if (!isPause) {
+                                flight.isGoingUp = true;
+                                flight.toShoot++;
+                                resume();
+                            }
                         }
                     }
-                    if (event.getX() >= screenX /2 && !isPause)
-
-//                if(event.getX() < screenX / 2) {
-//                    if(!isPause())
-//                    {
-//                        flight.isGoingUp = true;
-//                        flight.toShoot++;
-//                        resume();
-//                    }
-//                }
-                        if (event.getX() >= screenX /2 && !isPause )
-                        {
-                            flight.toShoot++;
-                        }
-                    break;
-
                 }
-
-                else{
+                if (event.getX() >= screenX / 2 && !isPause) {
+                    flight.toShoot++;
+                }
+                if (event.getX() < screenX / 2) {
+                    flight.isGoingUp = true;
+                }
+                if (event.getX() >= screenX / 2) {
+                    flight.toShoot++;
+                } else {
                     if (event.getX() >= screenX / 3 && event.getX() <= screenX / 2
                             && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
                         isPause = false;
@@ -296,25 +302,24 @@ public class GameView extends SurfaceView implements Runnable {
                         break;
                     }
                 }
-
+                break;
             case MotionEvent.ACTION_UP:
                 flight.isGoingUp = false;
                 break;
+
+            return true;
         }
 
-        return true;
-    }
+        public void newBullet() {
 
-    public void newBullet() {
-
-        if (!prefs.getBoolean("isMute", false))
-            soundPool.play(sound, 1, 1, 0, 0, 2);
-        if(!isPause) {
-            Bullet bullet = new Bullet(getResources());
-            bullet.x = flight.x + flight.width;
-            bullet.y = flight.y + (flight.height / 2);
-            bullets.add(bullet);
+            if (!prefs.getBoolean("isMute", false))
+                soundPool.play(sound, 1, 1, 0, 0, 2);
+            if (!isPause) {
+                Bullet bullet = new Bullet(getResources());
+                bullet.x = flight.x + flight.width;
+                bullet.y = flight.y + (flight.height / 2);
+                bullets.add(bullet);
+            }
         }
     }
-
-}
+    }

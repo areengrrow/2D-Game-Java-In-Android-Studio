@@ -304,6 +304,9 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     private void waitBeforeExiting() {
         try {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+            }
             Thread.sleep(3000);
             activity.finish();
         } catch (InterruptedException e) {
@@ -353,7 +356,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                             mediaPlayer.start();
                             mediaPlayer.setLooping(true);
                         } else
-                            mediaPlayer.stop();
+                            if (mediaPlayer != null)
+                                mediaPlayer.stop();
                     }
                     break;
                 }

@@ -9,11 +9,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -66,13 +65,16 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     final boolean isServer = Objects.equals(singleton.left, userId);
     private boolean leftState = true, rightState = true;
     Set<Long> playTimes = new HashSet<Long>();
-    boolean shootFlag = true, leftFlag = true, rightFlag = true;
+    boolean shootFlag = true, leftFlag = true, rightFlag = true, isReady = false;
     MediaPlayer mediaPlayer;
+    long globalTime;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
 
         this.activity = activity;
+        Date date = new Date();
+        globalTime = date.getTime() - 5000;
 
         prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
 
@@ -111,6 +113,15 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         paintRight.setColor(Color.RED);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        if (!isServer)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    composePostPolymorphism(0, 0, false, false,
+                    false, false, false, true);
+                }
+            }, 1000);
+
         // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
@@ -132,7 +143,10 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     Map<String, Map<String, ?>> datumMap = postMap.get(user);
                     Date date = new Date();
                     long currentTime = date.getTime() - 5000;
+                    globalTime = Math.max(globalTime, currentTime);
                     for (String key : datumMap.keySet()) {
+                        if (currentTime < globalTime)
+                            return;
                         Map<String, ?> dataMap = datumMap.get(key);
                         long time = (long) dataMap.get("time");
                         if (time < currentTime || playTimes.contains(time))
@@ -153,6 +167,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                                 else
                                     isGameOver = true;
                         } else {
+                            if ((boolean) dataMap.get("ready"))
+                                isReady = true;
                             flightRight.isGoingUp = (boolean) dataMap.get("bound");
                             flightRight.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
                             isExit = (boolean) dataMap.get("end");
@@ -293,6 +309,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
             for (BulletMultiple bullet : bulletsRight)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
+            if (!isReady) {
+                Bitmap ready = BitmapFactory.decodeResource(getResources(), R.drawable.ready);
+                int width = (int) (ready.getWidth() / 4  * GameViewMultiple.screenRatioX);
+                int height = (int) (ready.getHeight() / 4 * GameViewMultiple.screenRatioY);
+                ready = Bitmap.createScaledBitmap(ready, width, height, false);
+                canvas.drawBitmap(ready, screenX / 3, screenY / 3, paint);
+            }
 
             getHolder().unlockCanvasAndPost(canvas);
 
@@ -338,6 +361,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isReady)
+            return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getY() < 150) {
@@ -391,11 +416,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     private void writeNewPost(String username, long scoreLeft, long scoreRight, boolean bound,
-                              boolean shoot, boolean left, boolean right, boolean end) {
+                              boolean shoot, boolean left, boolean right, boolean end, boolean ready) {
         String key = mDatabase.child("posts").push().getKey();
         Date date = new Date();
         Post post = new Post(userId, username, scoreLeft, scoreRight, bound, shoot, left, right,
-                end, date.getTime());
+                end, date.getTime(), ready);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -425,6 +450,12 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot, boolean left,
                             boolean right, boolean end) {
+        composePostPolymorphism(scoreLeft, scoreRight, bound, shoot, left, right, end, false);
+    }
+
+    public void composePostPolymorphism(long scoreLeft, long scoreRight, boolean bound,
+                                        boolean shoot, boolean left, boolean right,
+                                        boolean end, boolean ready) {
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -436,7 +467,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             writeNewPost(user.username, scoreLeft, scoreRight, bound, shoot,
-                                    left, right, end);
+                                    left, right, end, ready);
                         }
                     }
                     @Override

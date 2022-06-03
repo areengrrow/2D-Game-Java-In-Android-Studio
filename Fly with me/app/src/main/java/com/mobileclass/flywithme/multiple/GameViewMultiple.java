@@ -85,7 +85,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         soundPool = new SoundPool.Builder()
                 .setAudioAttributes(audioAttributes)
                 .build();
-
         sound = soundPool.load(activity, R.raw.shoot, 1);
 
         this.screenX = screenX;
@@ -122,7 +121,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 }
             }, 1000);
 
-        // Initialize Database
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
     }
@@ -184,7 +182,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             }
         };
         mPostReference.addValueEventListener(postListener);
-        // [END post_value_event_listener]
     }
 
 
@@ -314,7 +311,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 int width = (int) (ready.getWidth() / 4  * GameViewMultiple.screenRatioX);
                 int height = (int) (ready.getHeight() / 4 * GameViewMultiple.screenRatioY);
                 ready = Bitmap.createScaledBitmap(ready, width, height, false);
-                canvas.drawBitmap(ready, screenX / 3, screenY / 3, paint);
+                canvas.drawBitmap(ready, screenX / 3f, screenY / 3f, paint);
             }
 
             getHolder().unlockCanvasAndPost(canvas);
@@ -384,7 +381,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     }
                     break;
                 }
-                boolean isShoot = (event.getX() < screenX / 2) != isServer;
+                boolean isShoot = (event.getX() < screenX / 2f) != isServer;
                 if (!isShoot)
                     composePost(singleton.scoreLeft, singleton.scoreRight, true, false,
                             true, true, false);
@@ -401,7 +398,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     composePost(singleton.scoreLeft, singleton.scoreRight, false, true,
                             true, true, false);
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
                 composePost(singleton.scoreLeft, singleton.scoreRight, false, false,
@@ -430,26 +426,21 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         Log.w(TAG, databaseChild);
     }
 
-    public void newBulletLeft() {
+    public void newBullet(boolean isLeft) {
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-        BulletMultiple bullet = new BulletMultiple(getResources(), true);
-        bullet.x = flightLeft.x + flightLeft.width;
-        bullet.y = flightLeft.y + (flightLeft.height / 2);
-        bulletsLeft.add(bullet);
+        BulletMultiple bullet = new BulletMultiple(getResources(), isLeft);
+        bullet.x = isLeft ? flightLeft.x + flightLeft.width : flightRight.x;
+        bullet.y = isLeft ? flightLeft.y + (flightLeft.height / 2) :
+                flightRight.y + (flightRight.height / 2) + 25;
+        if (isLeft)
+            bulletsLeft.add(bullet);
+        else
+            bulletsRight.add(bullet);
     }
 
-    public void newBulletRight() {
-        if (!prefs.getBoolean("isMute", false))
-            soundPool.play(sound, 1, 1, 0, 0, 1);
-        BulletMultiple bullet = new BulletMultiple(getResources(), false);
-        bullet.x = flightRight.x;
-        bullet.y = flightRight.y + (flightRight.height / 2) + 25;
-        bulletsRight.add(bullet);
-    }
-
-    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot, boolean left,
-                            boolean right, boolean end) {
+    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot,
+                            boolean left, boolean right, boolean end) {
         composePostPolymorphism(scoreLeft, scoreRight, bound, shoot, left, right, end, false);
     }
 

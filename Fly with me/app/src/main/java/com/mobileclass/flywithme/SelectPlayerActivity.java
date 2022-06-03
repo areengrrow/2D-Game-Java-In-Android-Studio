@@ -124,7 +124,6 @@ public class SelectPlayerActivity extends AppCompatActivity {
             if (isAsking)
                 return;
             composePost("", true, false, false, false);
-            // 5 seconds by default, can be changed later
             int mInterval = 3000;
             mHandler.postDelayed(mStatusChecker, mInterval);
         }

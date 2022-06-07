@@ -48,10 +48,7 @@ public class FlightMultiple {
     Bitmap getFlight (Boolean isLeft) {
         if (toShoot != 0) {
             toShoot--;
-            if (isLeft)
-                gameView.newBulletLeft();
-            else
-                gameView.newBulletRight();
+            gameView.newBullet(isLeft);
             return shoot1;
         }
         if (wingCounter == 0) {

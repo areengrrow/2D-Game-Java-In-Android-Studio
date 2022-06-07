@@ -55,6 +55,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     Singleton singleton = Singleton.getInstance();
     Set<Long> selectTimes = new HashSet<Long>();
     boolean changeActivity = false, changeUsers = false;
+    long globalTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         usersGV = findViewById(R.id.users);
+        Date date = new Date();
+        globalTime = date.getTime() - 5000;
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
@@ -121,7 +124,6 @@ public class SelectPlayerActivity extends AppCompatActivity {
             if (isAsking)
                 return;
             composePost("", true, false, false, false);
-            // 5 seconds by default, can be changed later
             int mInterval = 3000;
             mHandler.postDelayed(mStatusChecker, mInterval);
         }
@@ -141,34 +143,27 @@ public class SelectPlayerActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (changeActivity)
                     return;
-                // Get Post object and use the values to update the UI
                 Map<String, Map<String, ?>> postMap =
                         (HashMap<String, Map<String, ?>>) dataSnapshot.getValue();
+                Date date = new Date();
+                long currentTime = date.getTime() - 5000;
+                globalTime = Math.max(globalTime, currentTime);
                 for (String key : postMap.keySet()) {
+                    if (currentTime < globalTime)
+                        return;
                     Map<String, ?> dataMap = postMap.get(key);
-                    String authorName = (String) dataMap.get("author");
-                    long selectTime = (long)dataMap.get("time");
-                    Date date = new Date();
-                    if (selectTimes.contains(selectTime) ||
-                            Objects.equals(singleton.username, authorName) ||
-                            selectTime < date.getTime() - 5000)
+                    long selectTime = (long) dataMap.get("time");
+                    if (selectTime < currentTime || selectTimes.contains(selectTime))
                         continue;
                     selectTimes.add(selectTime);
+                    String authorName = (String) dataMap.get("author");
+                    if (Objects.equals(singleton.username, authorName))
+                        continue;
                     String partnerName = (String) dataMap.get("partner");
-                    String uid = (String) dataMap.get("uid");
-                    if (!Objects.equals(singleton.username, authorName)) {
-                        boolean isWait = (boolean) dataMap.get("wait");
-                        if (isWait && !users.contains(authorName)) {
-                            users.add(authorName);
-                            changeUsers = true;
-                        } else if (!isWait && users.contains(authorName)) {
-                            users.remove(authorName);
-                            changeUsers = true;
-                        }
-                    }
                     if (Objects.equals(partnerName, singleton.username)) {
                         boolean ask = (boolean) dataMap.get("ask");
                         boolean accept = (boolean) dataMap.get("accept");
+                        String uid = (String) dataMap.get("uid");
                         if (ask)
                             buildAskDialog(uid, authorName, partnerName);
                         else if (accept) {
@@ -185,6 +180,14 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     GameActivityMultiple.class));
                         } else
                             isAsking = false;
+                    }
+                    boolean isWait = (boolean) dataMap.get("wait");
+                    if (isWait && !users.contains(authorName)) {
+                        users.add(authorName);
+                        changeUsers = true;
+                    } else if (!isWait && users.contains(authorName)) {
+                        users.remove(authorName);
+                        changeUsers = true;
                     }
                 }
                 if (changeUsers) {
@@ -236,13 +239,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     singleton.rightName = userName;
                     singleton.scoreLeft = 0;
                     singleton.scoreRight = 0;
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(SelectPlayerActivity.this,
-                                    GameActivityMultiple.class));
-                        }
-                    }, 300);
+                    startActivity(new Intent(SelectPlayerActivity.this,
+                            GameActivityMultiple.class));
                 }
             })
             .setNegativeButton("Reject", new DialogInterface.OnClickListener() {

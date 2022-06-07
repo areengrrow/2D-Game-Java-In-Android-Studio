@@ -18,13 +18,14 @@ public class Post {
     public boolean left;
     public boolean right;
     public boolean end;
+    public boolean ready;
 
     public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
 
     public Post(String uid, String author, long scoreLeft, long scoreRight, boolean bound,
-                boolean shoot, boolean left, boolean right, boolean leftWin, long time) {
+                boolean shoot, boolean left, boolean right, boolean leftWin, long time, boolean ready) {
         this.uid = uid;
         this.author = author;
         this.scoreLeft = scoreLeft;
@@ -35,6 +36,7 @@ public class Post {
         this.right = right;
         this.end = leftWin;
         this.time = time;
+        this.ready = ready;
     }
 
     @Exclude
@@ -50,6 +52,7 @@ public class Post {
         result.put("left", left);
         result.put("right", right);
         result.put("end", end);
+        result.put("ready", ready);
 
         return result;
     }

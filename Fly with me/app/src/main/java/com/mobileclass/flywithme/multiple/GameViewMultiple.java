@@ -9,11 +9,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -66,27 +65,26 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     final boolean isServer = Objects.equals(singleton.left, userId);
     private boolean leftState = true, rightState = true;
     Set<Long> playTimes = new HashSet<Long>();
-    boolean shootFlag = true, leftFlag = true, rightFlag = true;
+    boolean shootFlag = true, leftFlag = true, rightFlag = true, isReady = false;
     MediaPlayer mediaPlayer;
+    long globalTime;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
 
         this.activity = activity;
+        Date date = new Date();
+        globalTime = date.getTime() - 5000;
 
         prefs = activity.getSharedPreferences("game", Context.MODE_PRIVATE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_GAME)
-                    .build();
-            soundPool = new SoundPool.Builder()
-                    .setAudioAttributes(audioAttributes)
-                    .build();
-        } else
-            soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .build();
+        soundPool = new SoundPool.Builder()
+                .setAudioAttributes(audioAttributes)
+                .build();
         sound = soundPool.load(activity, R.raw.shoot, 1);
 
         this.screenX = screenX;
@@ -114,7 +112,15 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         paintRight.setColor(Color.RED);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // Initialize Database
+        if (!isServer)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    composePostPolymorphism(0, 0, false, false,
+                    false, false, false, true);
+                }
+            }, 1000);
+
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
     }
@@ -133,11 +139,15 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     if (!isLeftSignal && !Objects.equals(user, singleton.right))
                         continue;
                     Map<String, Map<String, ?>> datumMap = postMap.get(user);
+                    Date date = new Date();
+                    long currentTime = date.getTime() - 5000;
+                    globalTime = Math.max(globalTime, currentTime);
                     for (String key : datumMap.keySet()) {
+                        if (currentTime < globalTime)
+                            return;
                         Map<String, ?> dataMap = datumMap.get(key);
                         long time = (long) dataMap.get("time");
-                        Date date = new Date();
-                        if (playTimes.contains(time) || time < date.getTime() - 5000)
+                        if (time < currentTime || playTimes.contains(time))
                             continue;
                         playTimes.add(time);
                         if (isLeftSignal) {
@@ -155,6 +165,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                                 else
                                     isGameOver = true;
                         } else {
+                            if ((boolean) dataMap.get("ready"))
+                                isReady = true;
                             flightRight.isGoingUp = (boolean) dataMap.get("bound");
                             flightRight.toShoot += (boolean) dataMap.get("shoot") ? 1 : 0;
                             isExit = (boolean) dataMap.get("end");
@@ -170,7 +182,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
             }
         };
         mPostReference.addValueEventListener(postListener);
-        // [END post_value_event_listener]
     }
 
 
@@ -295,6 +306,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
             for (BulletMultiple bullet : bulletsRight)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
+            if (!isReady) {
+                Bitmap ready = BitmapFactory.decodeResource(getResources(), R.drawable.ready);
+                int width = (int) (ready.getWidth() / 4  * GameViewMultiple.screenRatioX);
+                int height = (int) (ready.getHeight() / 4 * GameViewMultiple.screenRatioY);
+                ready = Bitmap.createScaledBitmap(ready, width, height, false);
+                canvas.drawBitmap(ready, screenX / 3f, screenY / 3f, paint);
+            }
 
             getHolder().unlockCanvasAndPost(canvas);
 
@@ -340,6 +358,8 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isReady)
+            return false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (event.getY() < 150) {
@@ -361,7 +381,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     }
                     break;
                 }
-                boolean isShoot = (event.getX() < screenX / 2) != isServer;
+                boolean isShoot = (event.getX() < screenX / 2f) != isServer;
                 if (!isShoot)
                     composePost(singleton.scoreLeft, singleton.scoreRight, true, false,
                             true, true, false);
@@ -378,7 +398,6 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                     composePost(singleton.scoreLeft, singleton.scoreRight, false, true,
                             true, true, false);
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
                 composePost(singleton.scoreLeft, singleton.scoreRight, false, false,
@@ -393,11 +412,11 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     }
 
     private void writeNewPost(String username, long scoreLeft, long scoreRight, boolean bound,
-                              boolean shoot, boolean left, boolean right, boolean end) {
+                              boolean shoot, boolean left, boolean right, boolean end, boolean ready) {
         String key = mDatabase.child("posts").push().getKey();
         Date date = new Date();
         Post post = new Post(userId, username, scoreLeft, scoreRight, bound, shoot, left, right,
-                end, date.getTime());
+                end, date.getTime(), ready);
         Map<String, Object> postValues = post.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -407,26 +426,27 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
         Log.w(TAG, databaseChild);
     }
 
-    public void newBulletLeft() {
+    public void newBullet(boolean isLeft) {
         if (!prefs.getBoolean("isMute", false))
             soundPool.play(sound, 1, 1, 0, 0, 1);
-        BulletMultiple bullet = new BulletMultiple(getResources(), true);
-        bullet.x = flightLeft.x + flightLeft.width;
-        bullet.y = flightLeft.y + (flightLeft.height / 2);
-        bulletsLeft.add(bullet);
+        BulletMultiple bullet = new BulletMultiple(getResources(), isLeft);
+        bullet.x = isLeft ? flightLeft.x + flightLeft.width : flightRight.x;
+        bullet.y = isLeft ? flightLeft.y + (flightLeft.height / 2) :
+                flightRight.y + (flightRight.height / 2) + 25;
+        if (isLeft)
+            bulletsLeft.add(bullet);
+        else
+            bulletsRight.add(bullet);
     }
 
-    public void newBulletRight() {
-        if (!prefs.getBoolean("isMute", false))
-            soundPool.play(sound, 1, 1, 0, 0, 1);
-        BulletMultiple bullet = new BulletMultiple(getResources(), false);
-        bullet.x = flightRight.x;
-        bullet.y = flightRight.y + (flightRight.height / 2) + 25;
-        bulletsRight.add(bullet);
+    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot,
+                            boolean left, boolean right, boolean end) {
+        composePostPolymorphism(scoreLeft, scoreRight, bound, shoot, left, right, end, false);
     }
 
-    public void composePost(long scoreLeft, long scoreRight, boolean bound, boolean shoot, boolean left,
-                            boolean right, boolean end) {
+    public void composePostPolymorphism(long scoreLeft, long scoreRight, boolean bound,
+                                        boolean shoot, boolean left, boolean right,
+                                        boolean end, boolean ready) {
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -438,7 +458,7 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             writeNewPost(user.username, scoreLeft, scoreRight, bound, shoot,
-                                    left, right, end);
+                                    left, right, end, ready);
                         }
                     }
                     @Override

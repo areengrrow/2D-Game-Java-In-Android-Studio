@@ -42,6 +42,7 @@ public class ChooseTheme extends AppCompatActivity {
         store.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                data.set_place("theme");
                 startActivity(new Intent(ChooseTheme.this, Store.class));
                 return false;
             }

@@ -42,6 +42,7 @@ public class ChooseCharacter extends AppCompatActivity {
         store.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                data.set_place("character");
                 startActivity(new Intent(ChooseCharacter.this, Store.class));
                 return false;
             }

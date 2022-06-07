@@ -9,6 +9,7 @@ public class OpenClass {
     public static int character = 0;
     public static long pages = 1053;
     public static boolean home = false;
+    public static String backTo = "theme";
     public void setTheme(int num)
     {
 
@@ -27,6 +28,13 @@ public class OpenClass {
     {
 
         return character;
+    }
+
+    public String get_place(){
+        return backTo;
+    }
+    public void set_place(String place){
+        backTo = place;
     }
 
     public boolean go_home(){

@@ -34,6 +34,7 @@ public class GameView extends SurfaceView implements Runnable {
     private List<Bullet> bullets;
     private int sound;
     private Flight flight;
+    private Rocket rocket;
     private GameActivity activity;
     private Background background1, background2;
     private static int extendX = 250, extendY = 100;
@@ -65,6 +66,8 @@ public class GameView extends SurfaceView implements Runnable {
         background2 = new Background(screenX + extendX, screenY + extendY, getResources());
         flight = new Flight(this, screenY, getResources());
         bullets = new ArrayList<>();
+        rocket = new Rocket(getResources());
+
         background2.x = screenX;
         paint = new Paint();
         paint.setTextSize(128);
@@ -157,6 +160,7 @@ public class GameView extends SurfaceView implements Runnable {
             pause = BitmapFactory.decodeResource(getResources(), R.drawable.pause_btn);
             canvas.drawBitmap(pause, 2000, 0, paint);
 
+
             if (isPause) {
                 Bitmap menu_home, menu_continue;
                 menu_home = BitmapFactory.decodeResource(getResources(), R.drawable.menu_home);
@@ -165,9 +169,12 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(menu_home, screenX / 2, screenY / 3, paint);
             }
 
+            canvas.drawBitmap(rocket.rocket,screenX/2f , screenY-160,paint);
             for (Bird bird : birds)
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
             canvas.drawText(score + "", screenX / 2f, 164, paint);
+
+
 
             if (isGameOver) {
                 isPlaying = false;

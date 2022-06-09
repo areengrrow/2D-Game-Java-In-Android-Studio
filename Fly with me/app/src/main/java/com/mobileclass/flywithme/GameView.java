@@ -35,9 +35,12 @@ public class GameView extends SurfaceView implements Runnable {
     private int sound;
     private Flight flight;
     private Rocket rocket;
+    private Health health;
     private GameActivity activity;
     private Background background1, background2;
     private static int extendX = 250, extendY = 100;
+
+    OpenClass data = new OpenClass();
 
 
     public GameView(GameActivity activity, int screenX, int screenY) {
@@ -67,6 +70,7 @@ public class GameView extends SurfaceView implements Runnable {
         flight = new Flight(this, screenY, getResources());
         bullets = new ArrayList<>();
         rocket = new Rocket(getResources());
+        health = new Health(getResources());
 
         background2.x = screenX;
         paint = new Paint();
@@ -139,7 +143,12 @@ public class GameView extends SurfaceView implements Runnable {
             bird.x -= bird.speed;
             if (bird.x + bird.width < 0) {
                 if (!bird.wasShot) {
-                    isGameOver = true;
+                    if (data.getHealthAmount() > 0){
+                        bird.wasShot = true;
+                        data.addHealth(-1);
+                    } else {
+                        isGameOver = true;
+                    }
                     return;
                 }
                 int bound = (int) (30 * screenRatioX);
@@ -151,8 +160,12 @@ public class GameView extends SurfaceView implements Runnable {
                 bird.wasShot = false;
             }
             if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape()) && bird.wasShot == false) {
-
-                isGameOver = true;
+                if (data.getHealthAmount() > 0){
+                    bird.wasShot = true;
+                    data.addHealth(-1);
+                } else {
+                    isGameOver = true;
+                }
                 return;
             }
         }
@@ -178,6 +191,13 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             canvas.drawBitmap(rocket.rocket,screenX/2f , screenY-160,paint);
+            canvas.drawText("x " + data.getRocketAmount() + " ", screenX/2f + 170, screenY-60, paint);
+
+            canvas.drawBitmap(health.health,100 , 60,paint);
+            canvas.drawText("x " + data.getHealthAmount() + " ", 270, 160, paint);
+
+
+
             for (Bird bird : birds)
                 if (bird.wasShot == false)
                     canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
@@ -274,11 +294,12 @@ public class GameView extends SurfaceView implements Runnable {
                         isPause = true;
                         break;
                     } else if (event.getX() >= 2*screenX / 3) {
-//                        clear();
+
                         flight.toShoot++;
                     } else if (event.getX() <= screenX / 3) {
                         flight.isGoingUp = true;
-                    } else if ((event.getX() >= (screenX/2) - 100) && (event.getX() <= screenX/2 + 100)){
+                    } else if ((event.getX() >= (screenX/2) - 100) && (event.getX() <= screenX/2 + 100) && data.getRocketAmount() > 0){
+                        data.addRocket(-1);
                         clear();
                     }
                 } else {

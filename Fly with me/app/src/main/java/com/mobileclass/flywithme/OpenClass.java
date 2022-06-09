@@ -7,6 +7,8 @@ package com.mobileclass.flywithme;
 public class OpenClass {
     public static int theme = 1;
     public static int character = 0;
+    public static int rocketAmount = 0;
+    public static int healthAmount = 0;
     public static long pages = 1053;
     public static boolean home = false;
     public static String backTo = "theme";
@@ -44,4 +46,9 @@ public class OpenClass {
         home = true;
     }
 
+    public void addHealth(int num) { healthAmount += num;}
+    public int getHealthAmount() {return healthAmount;}
+
+    public void addRocket(int num) { rocketAmount += num;}
+    public int getRocketAmount() {return rocketAmount;}
 }

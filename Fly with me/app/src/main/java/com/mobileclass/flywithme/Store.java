@@ -27,5 +27,21 @@ public class Store extends AppCompatActivity {
                 return false;
             }
         });
+
+        findViewById(R.id.healthImage).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                data.addHealth(1);
+                return false;
+            }
+        });
+
+        findViewById(R.id.rocketImage).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                data.addRocket(1);
+                return false;
+            }
+        });
     }
 }

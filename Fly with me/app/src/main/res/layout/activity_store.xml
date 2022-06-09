@@ -33,7 +33,7 @@
         app:srcCompat="@drawable/button_back" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/healthImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="77dp"
@@ -62,7 +62,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/speedImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="306dp"
@@ -91,7 +91,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/rocketImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginStart="528dp"

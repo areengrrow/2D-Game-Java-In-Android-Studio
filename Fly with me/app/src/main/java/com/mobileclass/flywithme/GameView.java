@@ -125,7 +125,7 @@ public class GameView extends SurfaceView implements Runnable {
             bullet.x += 50 * screenRatioX;
             for (Bird bird : birds) {
                 if (Rect.intersects(bird.getCollisionShape(),
-                        bullet.getCollisionShape())) {
+                        bullet.getCollisionShape()) && bird.wasShot == false) {
                     score++;
                     bird.x = -500;
                     bullet.x = screenX + 500;
@@ -150,7 +150,7 @@ public class GameView extends SurfaceView implements Runnable {
                 bird.y = random.nextInt(screenY - bird.height);
                 bird.wasShot = false;
             }
-            if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape())) {
+            if (Rect.intersects(bird.getCollisionShape(), flight.getCollisionShape()) && bird.wasShot == false) {
 
                 isGameOver = true;
                 return;
@@ -179,7 +179,8 @@ public class GameView extends SurfaceView implements Runnable {
 
             canvas.drawBitmap(rocket.rocket,screenX/2f , screenY-160,paint);
             for (Bird bird : birds)
-                canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
+                if (bird.wasShot == false)
+                    canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
             canvas.drawText(score + "", screenX / 2f, 164, paint);
 
 
@@ -253,6 +254,14 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
+    public void clear(){
+        for (Bird bird : birds) {
+            if (bird.wasShot == false) {
+                score++;
+                bird.wasShot = true;
+            }
+        }
+    }
     boolean isPause = false;
 
     @Override
@@ -264,11 +273,13 @@ public class GameView extends SurfaceView implements Runnable {
                     if (event.getX() >= screenX / 2 && event.getY() <= 200) {
                         isPause = true;
                         break;
-                    } else if (event.getX() >= screenX / 2) {
+                    } else if (event.getX() >= 2*screenX / 3) {
+//                        clear();
                         flight.toShoot++;
-                    } else if (event.getX() <= screenX / 2) {
+                    } else if (event.getX() <= screenX / 3) {
                         flight.isGoingUp = true;
-
+                    } else if ((event.getX() >= (screenX/2) - 100) && (event.getX() <= screenX/2 + 100)){
+                        clear();
                     }
                 } else {
                     if (event.getX() >= screenX / 3 && event.getX() <= screenX / 2 && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {

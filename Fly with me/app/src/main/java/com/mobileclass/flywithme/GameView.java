@@ -231,7 +231,7 @@ public class GameView extends SurfaceView implements Runnable {
         try {
             sound = soundPool.load(activity, R.raw.go_up, 1);
             soundPool.play(sound, 1, 1, 0, 0, 2);
-            Thread.sleep(300);
+            Thread.sleep(3000);
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();
         } catch (InterruptedException e) {

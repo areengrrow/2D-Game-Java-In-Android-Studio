@@ -102,6 +102,17 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        findViewById(R.id.log_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRepeatingTask();
+                composePost("", false, false, false, false);
+                FirebaseAuth.getInstance().signOut();
+                finish();
+                startActivity(new Intent(SelectPlayerActivity.this, SignInActivity.class));
+            }
+        });
     }
 
     @Override

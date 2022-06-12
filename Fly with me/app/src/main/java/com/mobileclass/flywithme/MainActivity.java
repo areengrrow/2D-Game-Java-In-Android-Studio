@@ -5,14 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.mobileclass.flywithme.multiple.Singleton;
+
 public class MainActivity extends AppCompatActivity {
 
     private boolean isMute;
+    private FirebaseAuth mAuth;
+    Singleton singleton = Singleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
-
+        mAuth = FirebaseAuth.getInstance();
         findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.multiple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SignInActivity.class));
+                if (mAuth.getCurrentUser() != null) {
+                    onAuthSuccess(mAuth.getCurrentUser());
+                } else {
+                    startActivity(new Intent(MainActivity.this, SignInActivity.class));
+                }
             }
         });
 
@@ -70,5 +81,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void onAuthSuccess(FirebaseUser user) {
+        singleton.username = user.getEmail().split("@")[0];
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(MainActivity.this, SelectPlayerActivity.class));
+            }
+        }, 1000);
     }
 }

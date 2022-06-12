@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -14,19 +15,29 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.mobileclass.flywithme.models.UserData;
 import com.mobileclass.flywithme.models.PostSelect;
 import com.mobileclass.flywithme.models.User;
 import com.mobileclass.flywithme.multiple.Singleton;
 import com.mobileclass.flywithme.multiple.UserGVAdapter;
+import com.mobileclass.flywithme.utils.SelectImageHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 public class SelectPlayerActivity extends AppCompatActivity {
@@ -56,6 +68,10 @@ public class SelectPlayerActivity extends AppCompatActivity {
     Set<Long> selectTimes = new HashSet<Long>();
     boolean changeActivity = false, changeUsers = false;
     long globalTime;
+    SelectImageHelper selectImageHelper;
+    ImageView avatar;
+    StorageReference storageReference;
+    String uImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +79,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_player);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        usersGV = findViewById(R.id.users);
+
         Date date = new Date();
         globalTime = date.getTime() - 5000;
 
@@ -74,6 +90,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
         mHandler = new Handler();
         startRepeatingTask();
 
+        usersGV = findViewById(R.id.users);
         usersGV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -113,11 +130,99 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 startActivity(new Intent(SelectPlayerActivity.this, SignInActivity.class));
             }
         });
+
+        avatar = findViewById(R.id.avatar);
+        selectImageHelper = new SelectImageHelper(this, avatar);
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImageHelper.selectImageOption();
+            }
+        });
+
+        storageReference = FirebaseStorage.getInstance().getReference();
+        TextView userName = findViewById(R.id.user_name);
+        userName.setText(singleton.username);
+        getUserDetails();
     }
+
+    private void getUserDetails() {
+        DatabaseReference mReference = FirebaseDatabase.getInstance().getReference().child("users");
+        mReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean userFound = false;
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                    if (singleton.username.equals(data.getKey())) {
+                        uImage = data.child("imageUrl").getValue(String.class);
+                        userFound = true;
+                        break;
+                    }
+                }
+                if (userFound) {
+                    Glide.with(getApplicationContext()).load(uImage).into(avatar);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        super.onActivityResult(requestCode, resultCode, result);
+        selectImageHelper.handleResult(requestCode, resultCode, result);  // call this helper class method
+    }
+
+    @Override
+    public void onRequestPermissionsResult(final int requestCode, final @NonNull String[] permissions, final @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        selectImageHelper.handleGrantedPermisson(requestCode, grantResults);   // call this helper class method
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+        Uri file = selectImageHelper.getURI_FOR_SELECTED_IMAGE();
+        if (file != null) {
+            Random random = new Random();
+            final String s1 = String.valueOf(random.nextInt(263443));
+            StorageReference sR = storageReference.child(s1);
+            sR.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    if (taskSnapshot.getMetadata() != null) {
+                        if (taskSnapshot.getMetadata().getReference() != null) {
+                            Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String downloadUrl = uri.toString();
+
+                                    UserData userData = new UserData();
+                                    userData.setName(singleton.username);
+                                    userData.setImageUrl(Objects.requireNonNull(downloadUrl));
+                                    userData.setScore("0");
+                                    FirebaseDatabase.getInstance().getReference().child("users").child(singleton.username).setValue(userData);
+                                }
+                            });
+                        }
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(SelectPlayerActivity.this, "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         if (singleton.message != null) {
             Toast.makeText(SelectPlayerActivity.this, singleton.message, Toast.LENGTH_SHORT)
                     .show();
@@ -207,6 +312,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     usersGV.setAdapter(adapter);
                     findViewById(R.id.textView).setVisibility(users.isEmpty() ? View.VISIBLE :
                             View.INVISIBLE);
+                    changeUsers = false;
                 }
                 Log.w(TAG_GET, "select post");
             }

@@ -66,7 +66,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     String partner;
     Singleton singleton = Singleton.getInstance();
     Set<Long> selectTimes = new HashSet<Long>();
-    boolean changeActivity = false, changeUsers = false;
+    boolean changeActivity = false, changeUsers = false, hasPicture = false;
     long globalTime;
     SelectImageHelper selectImageHelper;
     ImageView avatar;
@@ -151,6 +151,8 @@ public class SelectPlayerActivity extends AppCompatActivity {
         mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (hasPicture)
+                    return;
                 boolean userFound = false;
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
 
@@ -162,6 +164,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 }
                 if (userFound) {
                     Glide.with(getApplicationContext()).load(uImage).into(avatar);
+                    hasPicture = true;
                 }
             }
 
@@ -211,6 +214,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     userData.setImageUrl(Objects.requireNonNull(downloadUrl));
                                     userData.setScore("0");
                                     FirebaseDatabase.getInstance().getReference().child("users").child(singleton.username).setValue(userData);
+                                    hasPicture = true;
                                 }
                             });
                         }
@@ -222,6 +226,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                     Toast.makeText(SelectPlayerActivity.this, "Database Error", Toast.LENGTH_SHORT).show();
                 }
             });
+            return;
         }
         if (singleton.message != null) {
             Toast.makeText(SelectPlayerActivity.this, singleton.message, Toast.LENGTH_SHORT)

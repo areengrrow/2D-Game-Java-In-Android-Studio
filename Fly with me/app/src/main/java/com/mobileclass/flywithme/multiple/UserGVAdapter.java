@@ -40,7 +40,7 @@ public class UserGVAdapter extends ArrayAdapter<String> {
         TextView user = listitemView.findViewById(R.id.user);
         user.setText(userName);
         ImageView avatar = listitemView.findViewById(R.id.avatar_card);
-        DatabaseReference mReference = FirebaseDatabase.getInstance().getReference().child("users");
+        DatabaseReference mReference = FirebaseDatabase.getInstance().getReference().child("users-data");
         mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

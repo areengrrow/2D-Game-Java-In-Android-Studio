@@ -54,7 +54,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     private static final String TAG_GET = "GetPost";
     GridView usersGV;
     private DatabaseReference mDatabase;
-    private DatabaseReference mPostReference;
+    private DatabaseReference mPostReference, usersDataReference;
     ArrayList<String> users = new ArrayList<>();
     final String userId = getUid();
     Handler handler = new Handler();
@@ -85,6 +85,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
+        usersDataReference = FirebaseDatabase.getInstance().getReference().child("users-data");
         addPostEventListener(mPostReference);
 
         mHandler = new Handler();
@@ -147,8 +148,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
     }
 
     private void getUserDetails() {
-        DatabaseReference mReference = FirebaseDatabase.getInstance().getReference().child("users");
-        mReference.addValueEventListener(new ValueEventListener() {
+        usersDataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (hasPicture)
@@ -213,7 +213,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     userData.setName(singleton.username);
                                     userData.setImageUrl(Objects.requireNonNull(downloadUrl));
                                     userData.setScore("0");
-                                    FirebaseDatabase.getInstance().getReference().child("users").child(singleton.username).setValue(userData);
+                                    usersDataReference.child(singleton.username).setValue(userData);
                                     hasPicture = true;
                                 }
                             });

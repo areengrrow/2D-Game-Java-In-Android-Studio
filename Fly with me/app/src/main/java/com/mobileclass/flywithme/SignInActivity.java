@@ -69,8 +69,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         showProgressBar();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
-//        String email = "a@mail.com";
-//        String password = "123456";
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
@@ -117,12 +115,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void onAuthSuccess(FirebaseUser user) {
-        String username = usernameFromEmail(user.getEmail());
+        singleton.username = user.getEmail().split("@")[0];
 
-        // Write new user
-        writeNewUser(user.getUid(), username, user.getEmail());
-
-        // Go to MainActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -131,20 +125,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }, 1000);
     }
 
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
-
-        mDatabase.child("users").child(userId).setValue(user);
-    }
-
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            singleton.username = email.split("@")[0];
-            return singleton.username;
-        } else {
-            return email;
-        }
-    }
 
     private boolean validateForm() {
         boolean result = true;

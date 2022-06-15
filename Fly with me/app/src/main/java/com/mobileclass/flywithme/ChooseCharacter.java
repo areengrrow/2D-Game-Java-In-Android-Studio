@@ -72,5 +72,12 @@ public class ChooseCharacter extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ChooseCharacter.this, RankingSingle.class));
+            }
+        });
+
     }
 }

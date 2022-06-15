@@ -94,6 +94,13 @@ public class ChooseTheme extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ChooseTheme.this, RankingSingle.class));
+            }
+        });
+
     }
 
 }

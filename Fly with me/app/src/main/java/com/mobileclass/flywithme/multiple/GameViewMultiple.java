@@ -30,6 +30,7 @@ import com.mobileclass.flywithme.GameActivityMultiple;
 import com.mobileclass.flywithme.R;
 import com.mobileclass.flywithme.models.Post;
 import com.mobileclass.flywithme.models.User;
+import com.mobileclass.flywithme.utils.Singleton;
 
 import java.util.ArrayList;
 import java.util.Date;

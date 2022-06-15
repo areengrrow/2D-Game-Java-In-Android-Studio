@@ -12,8 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.mobileclass.flywithme.multiple.Singleton;
+import com.mobileclass.flywithme.utils.Singleton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null)
+            singleton.username = mAuth.getCurrentUser().getEmail().split("@")[0];
         findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mAuth.getCurrentUser() != null) {
-                    onAuthSuccess(mAuth.getCurrentUser());
+                    onAuthSuccess();
                 } else {
                     startActivity(new Intent(MainActivity.this, SignInActivity.class));
                 }
@@ -83,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void onAuthSuccess(FirebaseUser user) {
-        singleton.username = user.getEmail().split("@")[0];
+    private void onAuthSuccess() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme.multiple;
+package com.mobileclass.flywithme.utils;
 
 public class Singleton {
     // Static variable reference of single_instance

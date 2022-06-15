@@ -35,7 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import com.mobileclass.flywithme.models.UserData;
 import com.mobileclass.flywithme.models.PostSelect;
 import com.mobileclass.flywithme.models.User;
-import com.mobileclass.flywithme.multiple.Singleton;
+import com.mobileclass.flywithme.utils.Singleton;
 import com.mobileclass.flywithme.multiple.UserGVAdapter;
 import com.mobileclass.flywithme.utils.SelectImageHelper;
 

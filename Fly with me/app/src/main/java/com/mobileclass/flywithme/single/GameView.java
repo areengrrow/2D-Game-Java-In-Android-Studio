@@ -16,8 +16,11 @@ import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mobileclass.flywithme.GameActivity;
 import com.mobileclass.flywithme.MainActivity;
+import com.mobileclass.flywithme.utils.Singleton;
 import com.mobileclass.flywithme.utils.OpenClass;
 import com.mobileclass.flywithme.R;
 
@@ -44,6 +47,8 @@ public class GameView extends SurfaceView implements Runnable {
     private GameActivity activity;
     private Background background1, background2;
     private static int extendX = 250, extendY = 100;
+    private DatabaseReference usersDataReference;
+    Singleton singleton = Singleton.getInstance();
 
     OpenClass data = new OpenClass();
 
@@ -87,6 +92,7 @@ public class GameView extends SurfaceView implements Runnable {
             birds[i] = bird;
         }
         random = new Random();
+        usersDataReference = FirebaseDatabase.getInstance().getReference().child("users-data");
     }
 
     @Override
@@ -250,6 +256,8 @@ public class GameView extends SurfaceView implements Runnable {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("highscore", score);
             editor.apply();
+            if (!singleton.username.equals(""))
+                usersDataReference.child(singleton.username).child("single-score").setValue(score);
         }
 
     }

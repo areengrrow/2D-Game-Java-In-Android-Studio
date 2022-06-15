@@ -22,8 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mobileclass.flywithme.models.User;
-import com.mobileclass.flywithme.multiple.Singleton;
+import com.mobileclass.flywithme.utils.Singleton;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 

@@ -10,11 +10,6 @@
         android:roundIcon="@mipmap/ic_fly_with_me_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-
-            android:name=".SingleMode"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar"/>
 
         <activity
             android:name=".ChooseTheme"
@@ -23,12 +18,6 @@
             android:theme="@style/AppTheme.noActionBar" />
         <activity
             android:name=".ChooseCharacter"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.noActionBar" />
-
-        <activity
-            android:name=".GameMode"
             android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.noActionBar" />

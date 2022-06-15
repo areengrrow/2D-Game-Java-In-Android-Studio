@@ -2,7 +2,7 @@
 //public class OpenClass {
 //
 //}
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.utils;
 
 public class OpenClass {
     public static int theme = 1;

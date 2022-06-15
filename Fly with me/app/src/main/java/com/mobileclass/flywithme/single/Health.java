@@ -1,9 +1,11 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.single;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+
+import com.mobileclass.flywithme.R;
 
 public class Health {
     int x, y, width, height;

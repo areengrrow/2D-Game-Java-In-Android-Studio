@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.mobileclass.flywithme.utils.OpenClass;
+
 public class ChooseCharacter extends AppCompatActivity {
     OpenClass data = new OpenClass();
     ImageView back, pilot, flash, my_character, play, store;

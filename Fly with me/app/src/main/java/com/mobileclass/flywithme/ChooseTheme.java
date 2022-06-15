@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.mobileclass.flywithme.utils.OpenClass;
+
 public class ChooseTheme extends AppCompatActivity {
     OpenClass data = new OpenClass();
     ImageView back, next, assassin, fantasy, palace, nature, store;

@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.single;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,11 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+
+import com.mobileclass.flywithme.GameActivity;
+import com.mobileclass.flywithme.MainActivity;
+import com.mobileclass.flywithme.utils.OpenClass;
+import com.mobileclass.flywithme.R;
 
 import java.util.ArrayList;
 import java.util.List;

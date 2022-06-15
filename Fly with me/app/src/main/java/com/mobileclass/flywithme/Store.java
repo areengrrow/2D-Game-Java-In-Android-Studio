@@ -11,6 +11,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.mobileclass.flywithme.utils.OpenClass;
+
 public class Store extends AppCompatActivity {
     OpenClass data = new OpenClass();
     ImageView back, health, rocket;

@@ -6,6 +6,8 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.mobileclass.flywithme.single.GameView;
+
 public class GameActivity extends AppCompatActivity {
 
     private GameView gameView;

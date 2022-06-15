@@ -1,11 +1,11 @@
-package com.mobileclass.flywithme;
+package com.mobileclass.flywithme.single;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.widget.ImageView;
-import com.mobileclass.flywithme.OpenClass;
+
+import com.mobileclass.flywithme.utils.OpenClass;
+import com.mobileclass.flywithme.R;
 
 
 public class Background {

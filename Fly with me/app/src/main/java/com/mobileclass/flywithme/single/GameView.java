@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mobileclass.flywithme.GameActivity;
 import com.mobileclass.flywithme.MainActivity;
+import com.mobileclass.flywithme.multiple.GameViewMultiple;
 import com.mobileclass.flywithme.utils.Singleton;
 import com.mobileclass.flywithme.utils.OpenClass;
 import com.mobileclass.flywithme.R;
@@ -36,7 +37,7 @@ import java.util.Random;
 public class GameView extends SurfaceView implements Runnable {
 
     private Thread thread;
-    private boolean isPlaying, isGameOver = false;
+    private boolean isPlaying, isGameOver = false, isExit = false;
     private int screenX, screenY, score = 0;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
@@ -234,12 +235,18 @@ public class GameView extends SurfaceView implements Runnable {
 
 
 
-            if (isGameOver) {
-                Bitmap over;
-                over = BitmapFactory.decodeResource(getResources(), R.drawable.over);
-                canvas.drawBitmap(over, screenX / 3, screenY / 5, paint);
+            if (isGameOver || isExit) {
+                if (isGameOver) {
+                    Bitmap over;
+                    over = BitmapFactory.decodeResource(getResources(), R.drawable.over);
+                    int width = (int) (over.getWidth() / 1.2 * GameView.screenRatioX);
+                    int height = (int) (over.getHeight() / 1.2 * GameView.screenRatioY);
+                    over = Bitmap.createScaledBitmap(over, width, height, false);
+                    canvas.drawBitmap(over, (screenX - width) / 2f, (screenY - height) / 2f, paint);
 //                isPlaying = false;
-                canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+                    canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
+                } else
+                    canvas.drawText("EXIT GAME", screenX / 2f - 260, screenY / 2f, paint);
                 getHolder().unlockCanvasAndPost(canvas);
                 saveIfHighScore();
                 waitBeforeExiting();
@@ -343,7 +350,7 @@ public class GameView extends SurfaceView implements Runnable {
                     } else if (event.getX() >= screenX / 2 && event.getX() <= screenX / 2 + screenX / 8
                             && event.getY() >= screenY / 3 && event.getY() <= screenY / 3 + screenY / 4) {
                         isPause = false;
-                        isGameOver = true;
+                        isExit = true;
                         resume();
                         break;
                     }

@@ -28,7 +28,7 @@ public class Flight {
         else {
             flight1 = BitmapFactory.decodeResource(res, R.drawable.fly_red1);
             flight2 = BitmapFactory.decodeResource(res, R.drawable.fly_red2);
-            shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red1);
+            shoot1 = BitmapFactory.decodeResource(res, R.drawable.shoot_red);
             dead = BitmapFactory.decodeResource(res, R.drawable.dead_red);
         }
 

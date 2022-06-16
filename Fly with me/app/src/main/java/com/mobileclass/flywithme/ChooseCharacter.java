@@ -55,7 +55,7 @@ public class ChooseCharacter extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setCharacter(0);
                 pilot.setImageResource(R.drawable.shoot1);
-                flash.setImageResource(R.drawable.flash_not_choosed);
+                flash.setImageResource(R.drawable.red_not_choose);
                 my_character.setImageResource(R.drawable.shoot1);
                 return false;
             }
@@ -66,8 +66,8 @@ public class ChooseCharacter extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 data.setCharacter(1);
                 pilot.setImageResource(R.drawable.not_choosed);
-                flash.setImageResource(R.drawable.shoot_red1);
-                my_character.setImageResource(R.drawable.shoot_red1);
+                flash.setImageResource(R.drawable.shoot_red);
+                my_character.setImageResource(R.drawable.shoot_red);
                 return false;
             }
         });

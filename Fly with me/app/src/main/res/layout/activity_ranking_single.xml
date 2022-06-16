@@ -23,14 +23,10 @@
         android:id="@+id/back3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="682dp"
-        android:layout_marginBottom="300dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/button_back" />
 
     <TextView
@@ -59,6 +55,7 @@
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
             android:text="Rank"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -66,6 +63,7 @@
             android:layout_height="match_parent"
             android:padding="15dp"
             android:text="Avatar"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -75,6 +73,7 @@
             android:paddingStart="5dp"
             android:paddingTop="15dp"
             android:text="Name"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -83,6 +82,7 @@
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
             android:text="Match"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -91,12 +91,13 @@
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
             android:text="Highest score"
+            android:textColor="@android:color/black"
             android:textStyle="bold" />
     </TableRow>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rank"
-        android:layout_width="570dp"
+        android:layout_width="580dp"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"

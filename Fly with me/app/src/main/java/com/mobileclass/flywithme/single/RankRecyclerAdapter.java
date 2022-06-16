@@ -1,6 +1,7 @@
 package com.mobileclass.flywithme.single;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.mobileclass.flywithme.R;
 import com.mobileclass.flywithme.models.UserData;
+import com.mobileclass.flywithme.utils.Singleton;
 
 import java.util.ArrayList;
 
@@ -20,6 +22,7 @@ public class RankRecyclerAdapter extends RecyclerView.Adapter<RankRecyclerAdapte
 
     private Context context;
     private ArrayList<UserData> userDataArrayList;
+    Singleton singleton = Singleton.getInstance();
 
     public RankRecyclerAdapter(@NonNull Context context, ArrayList<UserData> userDataArrayList) {
         this.context = context;
@@ -41,6 +44,8 @@ public class RankRecyclerAdapter extends RecyclerView.Adapter<RankRecyclerAdapte
         holder.match.setText(String.valueOf(userData.getSingleMatch()));
         holder.highScore.setText(String.valueOf(userData.getSingleScore()));
         Glide.with(context).load(userData.getImageUrl()).into(holder.avatar);
+        if (singleton.username.equals(userData.getName()))
+            holder.itemView.setBackgroundColor(Color.LTGRAY);
     }
 
     @Override

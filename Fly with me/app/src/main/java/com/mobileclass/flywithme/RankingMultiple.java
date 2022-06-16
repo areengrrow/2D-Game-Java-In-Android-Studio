@@ -14,14 +14,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mobileclass.flywithme.models.UserData;
+import com.mobileclass.flywithme.adapters.RankMultipleRecyclerAdapter;
 import com.mobileclass.flywithme.adapters.RankRecyclerAdapter;
+import com.mobileclass.flywithme.models.UserData;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class RankingSingle extends AppCompatActivity {
+public class RankingMultiple extends AppCompatActivity {
 
     RecyclerView rankRecyclerView;
     private DatabaseReference usersDataReference;
@@ -29,18 +30,19 @@ public class RankingSingle extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ranking_single);
+        setContentView(R.layout.activity_ranking_multiple);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        findViewById(R.id.back3).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.back7).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        rankRecyclerView = findViewById(R.id.rank);
+        rankRecyclerView = findViewById(R.id.rankRecycler);
         usersDataReference = FirebaseDatabase.getInstance().getReference().child("users-data");
         usersDataReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -51,21 +53,22 @@ public class RankingSingle extends AppCompatActivity {
                     userData.setName(data.child("name").getValue(String.class));
                     String imageUrl = data.child("imageUrl").getValue(String.class);
                     userData.setImageUrl(imageUrl == null ? "" : imageUrl);
-                    Integer singleMatch = data.child("single-match").getValue(Integer.class);
-                    userData.setSingleMatch(singleMatch == null ? 0 : singleMatch);
-                    Integer singleScore = data.child("single-score").getValue(Integer.class);
-                    userData.setSingleScore(singleScore == null ? 0 : singleScore);
+                    Integer win = data.child("win").getValue(Integer.class);
+                    userData.setWin(win == null ? 0 : win);
+                    Integer lost = data.child("lost").getValue(Integer.class);
+                    userData.setLost(lost == null ? 0 : lost);
+                    userData.setTotal((win == null ? 0 : win) + (lost == null ? 0 : lost));
                     userDataArrayList.add(userData);
                 }
                 Collections.sort(userDataArrayList, new Comparator<UserData>() {
                     @Override
                     public int compare(UserData lhs, UserData rhs) {
-                        return Integer.compare(rhs.getSingleScore(), lhs.getSingleScore());
+                        return Integer.compare(rhs.getWin(), lhs.getWin());
                     }
                 });
-                RankRecyclerAdapter adapter = new RankRecyclerAdapter(RankingSingle.this,
+                RankMultipleRecyclerAdapter adapter = new RankMultipleRecyclerAdapter(RankingMultiple.this,
                         userDataArrayList);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(RankingSingle.this, LinearLayoutManager.VERTICAL, false);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(RankingMultiple.this, LinearLayoutManager.VERTICAL, false);
 
                 rankRecyclerView.setLayoutManager(layoutManager);
                 rankRecyclerView.setAdapter(adapter);
@@ -77,5 +80,6 @@ public class RankingSingle extends AppCompatActivity {
 
             }
         });
+
     }
 }

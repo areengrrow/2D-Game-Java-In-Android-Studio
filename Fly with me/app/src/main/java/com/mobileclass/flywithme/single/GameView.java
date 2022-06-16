@@ -55,7 +55,8 @@ public class GameView extends SurfaceView implements Runnable {
     private static int extendX = 250, extendY = 100;
     private DatabaseReference usersDataReference;
     Singleton singleton = Singleton.getInstance();
-    Integer matchCount;
+    private Integer matchCount;
+    private boolean triedLoad = false;
 
     OpenClass data = new OpenClass();
 
@@ -103,8 +104,10 @@ public class GameView extends SurfaceView implements Runnable {
         usersDataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!singleton.username.equals(""))
-                    matchCount = dataSnapshot.child(singleton.username).child("single-match").getValue(Integer.class);
+                if (singleton.username.equals("") || triedLoad)
+                    return;
+                matchCount = dataSnapshot.child(singleton.username).child("single-match").getValue(Integer.class);
+                triedLoad = true;
             }
 
             @Override
@@ -253,7 +256,6 @@ public class GameView extends SurfaceView implements Runnable {
                 return;
             }
 
-
             canvas.drawBitmap(flight.getFlight(), flight.x, flight.y, paint);
             for (Bullet bullet : bullets)
                 canvas.drawBitmap(bullet.bullet, bullet.x, bullet.y, paint);
@@ -267,8 +269,9 @@ public class GameView extends SurfaceView implements Runnable {
         try {
             sound = soundPool.load(activity, R.raw.go_up, 1);
             soundPool.play(sound, 1, 1, 0, 0, 2);
-            matchCount = matchCount == null ? 1 : matchCount + 1;;
-            usersDataReference.child(singleton.username).child("single-match").setValue(matchCount);
+            matchCount = matchCount == null ? 1 : matchCount + 1;
+            if (isGameOver)
+                usersDataReference.child(singleton.username).child("single-match").setValue(matchCount);
             Thread.sleep(3000);
             activity.startActivity(new Intent(activity, MainActivity.class));
             activity.finish();

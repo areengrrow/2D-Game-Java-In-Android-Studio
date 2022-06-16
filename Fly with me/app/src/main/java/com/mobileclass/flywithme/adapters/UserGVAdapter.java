@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme.multiple;
+package com.mobileclass.flywithme.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.mobileclass.flywithme.single;
+package com.mobileclass.flywithme.adapters;
 
 import android.content.Context;
 import android.graphics.Color;

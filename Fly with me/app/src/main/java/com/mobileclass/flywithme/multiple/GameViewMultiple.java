@@ -59,16 +59,17 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
     private BackgroundMultiple background1;
 
     private DatabaseReference mDatabase;
-    private DatabaseReference mPostReference;
+    private DatabaseReference mPostReference, usersDataReference;
     Singleton singleton = Singleton.getInstance();
     final String userId = getUid();
     final String databaseChild = "user-posts";
     final boolean isServer = Objects.equals(singleton.left, userId);
-    private boolean leftState = true, rightState = true;
+    private boolean leftState = true, rightState = true, triedLoad = false;
     Set<Long> playTimes = new HashSet<Long>();
     boolean shootFlag = true, leftFlag = true, rightFlag = true, isReady = false;
     MediaPlayer mediaPlayer;
     long globalTime;
+    private Integer win, lost;
 
     public GameViewMultiple(GameActivityMultiple activity, int screenX, int screenY) {
         super(activity);
@@ -124,6 +125,22 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
 
         mPostReference = FirebaseDatabase.getInstance().getReference().child(databaseChild);
         addPostEventListener(mPostReference);
+        usersDataReference = FirebaseDatabase.getInstance().getReference().child("users-data");
+        usersDataReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (triedLoad)
+                    return;
+                win = dataSnapshot.child(singleton.username).child("win").getValue(Integer.class);
+                lost = dataSnapshot.child(singleton.username).child("lost").getValue(Integer.class);
+                triedLoad = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -298,6 +315,13 @@ public class GameViewMultiple extends SurfaceView implements Runnable {
                 canvas.drawText(m, screenX / 2f - 300, screenY / 2f, paint);
                 singleton.message = m + ". Choose partner to play.";
                 isPlaying = false;
+                if (isGameOver) {
+                    if ((isServer && singleton.scoreLeft > singleton.scoreRight) ||
+                            (!isServer && singleton.scoreLeft < singleton.scoreRight))
+                        usersDataReference.child(singleton.username).child("win").setValue(win == null ? 1 : win + 1);
+                    else
+                        usersDataReference.child(singleton.username).child("lost").setValue(lost == null ? 1 : lost + 1);
+                }
                 getHolder().unlockCanvasAndPost(canvas);
                 waitBeforeExiting();
                 return;

@@ -36,7 +36,7 @@ import com.mobileclass.flywithme.models.UserData;
 import com.mobileclass.flywithme.models.PostSelect;
 import com.mobileclass.flywithme.models.User;
 import com.mobileclass.flywithme.utils.Singleton;
-import com.mobileclass.flywithme.multiple.UserGVAdapter;
+import com.mobileclass.flywithme.adapters.UserGVAdapter;
 import com.mobileclass.flywithme.utils.SelectImageHelper;
 
 import java.util.ArrayList;
@@ -129,6 +129,15 @@ public class SelectPlayerActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 finish();
                 startActivity(new Intent(SelectPlayerActivity.this, SignInActivity.class));
+            }
+        });
+
+        findViewById(R.id.rankBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRepeatingTask();
+                composePost("", false, false, false, false);
+                startActivity(new Intent(SelectPlayerActivity.this, RankingMultiple.class));
             }
         });
 

@@ -43,7 +43,8 @@ public class RankRecyclerAdapter extends RecyclerView.Adapter<RankRecyclerAdapte
         holder.name.setText(userData.getName());
         holder.match.setText(String.valueOf(userData.getSingleMatch()));
         holder.highScore.setText(String.valueOf(userData.getSingleScore()));
-        Glide.with(context).load(userData.getImageUrl()).into(holder.avatar);
+        if (!userData.getImageUrl().equals(""))
+            Glide.with(context).load(userData.getImageUrl()).into(holder.avatar);
         if (singleton.username.equals(userData.getName()))
             holder.itemView.setBackgroundColor(Color.LTGRAY);
     }

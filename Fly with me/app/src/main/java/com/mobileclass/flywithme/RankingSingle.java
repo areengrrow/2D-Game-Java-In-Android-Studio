@@ -50,7 +50,8 @@ public class RankingSingle extends AppCompatActivity {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     UserData userData = new UserData();
                     userData.setName(data.child("name").getValue(String.class));
-                    userData.setImageUrl(data.child("imageUrl").getValue(String.class));
+                    String imageUrl = data.child("imageUrl").getValue(String.class);
+                    userData.setImageUrl(imageUrl == null ? "" : imageUrl);
                     Integer singleMatch = data.child("single-match").getValue(Integer.class);
                     userData.setSingleMatch(singleMatch == null ? 0 : singleMatch);
                     Integer singleScore = data.child("single-score").getValue(Integer.class);

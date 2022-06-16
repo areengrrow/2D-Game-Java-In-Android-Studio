@@ -212,7 +212,6 @@ public class SelectPlayerActivity extends AppCompatActivity {
                                     UserData userData = new UserData();
                                     userData.setName(singleton.username);
                                     userData.setImageUrl(Objects.requireNonNull(downloadUrl));
-                                    userData.setScore("0");
                                     usersDataReference.child(singleton.username).setValue(userData);
                                     hasPicture = true;
                                 }

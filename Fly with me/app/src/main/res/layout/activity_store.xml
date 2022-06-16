@@ -33,88 +33,63 @@
         android:id="@+id/healthImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginStart="77dp"
+        android:layout_marginStart="172dp"
         android:layout_marginTop="133dp"
-        android:layout_marginEnd="504dp"
+        android:layout_marginEnd="409dp"
         android:layout_marginBottom="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/heathheath" />
 
     <TextView
         android:id="@+id/heath"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="121dp"
+        android:layout_marginStart="216dp"
         android:layout_marginTop="296dp"
-        android:layout_marginEnd="552dp"
+        android:layout_marginEnd="449dp"
         android:layout_marginBottom="83dp"
         android:text="Armor"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/speedImage"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="306dp"
-        android:layout_marginTop="133dp"
-        android:layout_marginEnd="275dp"
-        android:layout_marginBottom="128dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/speed" />
-
-    <TextView
-        android:id="@+id/speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="350dp"
-        android:layout_marginTop="296dp"
-        android:layout_marginEnd="315dp"
-        android:layout_marginBottom="83dp"
-        android:text="Speed"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/rocketImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginStart="528dp"
+        android:layout_marginStart="469dp"
         android:layout_marginTop="133dp"
-        android:layout_marginEnd="53dp"
+        android:layout_marginEnd="112dp"
         android:layout_marginBottom="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/rocket" />
 
     <TextView
         android:id="@+id/rocket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="563dp"
+        android:layout_marginStart="509dp"
         android:layout_marginTop="296dp"
-        android:layout_marginEnd="94dp"
+        android:layout_marginEnd="148dp"
         android:layout_marginBottom="83dp"
         android:text="Rocket"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView5"

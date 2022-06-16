@@ -46,9 +46,18 @@ public class OpenClass {
         home = true;
     }
 
-    public void addHealth(int num) { healthAmount += num;}
+    public void addHealth(int num) {
+        healthAmount += num;
+    }
     public int getHealthAmount() {return healthAmount;}
 
-    public void addRocket(int num) { rocketAmount += num;}
+    public void addRocket(int num) {
+        if (num == 1)rocketAmount = 1;
+        else rocketAmount = 0;
+    }
     public int getRocketAmount() {return rocketAmount;}
+    public void new_game(){
+        healthAmount = 0;
+        rocketAmount = 0;
+    }
 }

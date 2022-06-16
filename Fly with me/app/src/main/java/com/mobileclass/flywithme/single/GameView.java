@@ -223,13 +223,16 @@ public class GameView extends SurfaceView implements Runnable {
 
             }
 
-            canvas.drawBitmap(rocket.rocket,screenX/2f , screenY-160,paint);
-            canvas.drawText("x " + data.getRocketAmount() + " ", screenX/2f + 170, screenY-60, paint);
+            if(data.getRocketAmount() == 1 ) {
+                canvas.drawBitmap(rocket.rocket, 2*screenX/3, 60, paint);
+            }
 
-            canvas.drawBitmap(health.health,100 , 60,paint);
-            canvas.drawText("x " + data.getHealthAmount() + " ", 270, 160, paint);
-
-
+            if(data.getHealthAmount() >= 1){
+                int space = screenX/20;
+                for(int i = 0; i < data.getHealthAmount(); i++) {
+                    canvas.drawBitmap(health.health, space*i, 20, paint);
+                }
+            }
 
             for (Bird bird : birds)
                 if (bird.wasShot == false)
@@ -253,6 +256,7 @@ public class GameView extends SurfaceView implements Runnable {
                 getHolder().unlockCanvasAndPost(canvas);
                 saveIfHighScore();
                 waitBeforeExiting();
+                data.new_game();
                 return;
             }
 
@@ -333,15 +337,14 @@ public class GameView extends SurfaceView implements Runnable {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!isPause) {
-                    if (event.getX() >= screenX / 2 && event.getY() <= 200) {
+                    if (event.getX() >= 2*screenX / 3+300 && event.getY() <= 200) {
                         isPause = true;
                         break;
                     } else if (event.getX() >= 2*screenX / 3) {
-
                         flight.toShoot++;
                     } else if (event.getX() <= screenX / 3) {
                         flight.isGoingUp = true;
-                    } else if ((event.getX() >= (screenX/2) - 100) && (event.getX() <= screenX/2 + 100) && data.getRocketAmount() > 0){
+                    } else if ((event.getX() >= (2*screenX/3))&&(event.getX() <= (2*screenX/3)+300)  && event.getY() <= 200 ){
                         data.addRocket(-1);
                         clear();
                     }

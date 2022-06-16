@@ -45,8 +45,21 @@ public class Store extends AppCompatActivity {
         health.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                health.startAnimation(shake);
-                data.addHealth(1);
+                if(data.getHealthAmount() <=2) {
+                    health.startAnimation(shake);
+                    data.addHealth(1);
+                    if(data.getHealthAmount() == 1){
+                        health.setImageResource(R.drawable.heathheath1);
+                    }
+                    else if(data.getHealthAmount() == 2)
+                    {
+                        health.setImageResource(R.drawable.heathheath2);
+                    }
+                    else if(data.getHealthAmount() == 3)
+                    {
+                        health.setImageResource(R.drawable.heathheath3);
+                    }
+                }
                 return false;
             }
         });
@@ -54,8 +67,11 @@ public class Store extends AppCompatActivity {
         rocket.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                rocket.startAnimation(shake);
-                data.addRocket(1);
+                if(data.getRocketAmount() == 0) {
+                    rocket.startAnimation(shake);
+                    rocket.setImageResource(R.drawable.rocket_1);
+                    data.addRocket(1);
+                }
                 return false;
             }
         });

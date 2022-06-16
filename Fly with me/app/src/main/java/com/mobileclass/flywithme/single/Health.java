@@ -18,8 +18,8 @@ public class Health {
         width = health.getWidth();
         height = health.getHeight();
 
-        width /= 10;
-        height /= 10;
+        width /= 20;
+        height /= 20;
 
         width = (int) (width * GameView.screenRatioX);
         height = (int) (height * GameView.screenRatioY);

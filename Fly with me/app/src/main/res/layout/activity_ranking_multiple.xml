@@ -76,11 +76,12 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/textView6"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="Match"
+            android:text="Win"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 
@@ -94,19 +95,18 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView6"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="Win"
+            android:text="Match"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
     </TableRow>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rankRecycler"
-        android:layout_width="620dp"
+        android:layout_width="635dp"
         android:layout_height="match_parent"
         android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"

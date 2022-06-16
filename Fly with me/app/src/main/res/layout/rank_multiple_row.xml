@@ -39,12 +39,13 @@
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/matchMultiple"
+            android:id="@+id/win"
             android:layout_width="80dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="Match"
+            android:text="win"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -58,13 +59,12 @@
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/win"
+            android:id="@+id/matchMultiple"
             android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="win"
+            android:text="Match"
             android:textColor="@android:color/black" />
     </TableRow>
 

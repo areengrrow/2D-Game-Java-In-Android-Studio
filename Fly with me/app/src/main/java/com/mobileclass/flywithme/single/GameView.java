@@ -244,9 +244,9 @@ public class GameView extends SurfaceView implements Runnable {
                     over = Bitmap.createScaledBitmap(over, width, height, false);
                     canvas.drawBitmap(over, (screenX - width) / 2f, (screenY - height) / 2f, paint);
 //                isPlaying = false;
-                    canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
                 } else
                     canvas.drawText("EXIT GAME", screenX / 2f - 260, screenY / 2f, paint);
+                canvas.drawBitmap(isGameOver ? flight.getDead() : flight.getFlight(), flight.x, flight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
                 saveIfHighScore();
                 waitBeforeExiting();

@@ -162,7 +162,7 @@ public class SelectPlayerActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                if (userFound) {
+                if (userFound && uImage != null) {
                     Glide.with(getApplicationContext()).load(uImage).into(avatar);
                     hasPicture = true;
                 }

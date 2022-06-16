@@ -121,6 +121,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 startActivity(new Intent(SignInActivity.this, SelectPlayerActivity.class));
+                finish();
             }
         }, 1000);
     }

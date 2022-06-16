@@ -53,7 +53,7 @@ public class UserGVAdapter extends ArrayAdapter<String> {
                         break;
                     }
                 }
-                if (userFound) {
+                if (userFound && uImage != null) {
                     Glide.with(getContext()).load(uImage).into(avatar);
                 }
             }

@@ -29,10 +29,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private static final String TAG = "SignIn";
     Button btnSignIn, btnSignUp;
     EditText etEmail, etPassword;
-    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
     Singleton singleton = Singleton.getInstance();
+    private DatabaseReference usersDataReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_sign_in);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
         btnSignIn = findViewById(R.id.buttonSignIn);
@@ -50,6 +49,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         etEmail = findViewById(R.id.fieldEmail);
         etPassword = findViewById(R.id.fieldPassword);
         mProgressBar = findViewById(R.id.progressBar);
+        usersDataReference = FirebaseDatabase.getInstance().getReference().child("users-data");
 
         findViewById(R.id.back2).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +115,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void onAuthSuccess(FirebaseUser user) {
         singleton.username = user.getEmail().split("@")[0];
+        usersDataReference.child(singleton.username).child("name").setValue(singleton.username);
 
         new Handler().postDelayed(new Runnable() {
             @Override

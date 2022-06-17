@@ -340,7 +340,7 @@ public class GameView extends SurfaceView implements Runnable {
                     if (event.getX() >= 2*screenX / 3+300 && event.getY() <= 200) {
                         isPause = true;
                         break;
-                    } else if (event.getX() >= 2*screenX / 3) {
+                    } else if (event.getX() >= 2*screenX / 3 && event.getY() >= 200) {
                         flight.toShoot++;
                     } else if (event.getX() <= screenX / 3) {
                         flight.isGoingUp = true;

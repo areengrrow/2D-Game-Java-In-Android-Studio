@@ -19,7 +19,7 @@ public class Singleton {
     // restricted to this class itself
     private Singleton()
     {
-        username = "Hello I am a string part of Singleton class";
+
     }
 
     // Static method
